@@ -3,6 +3,7 @@ package banca.uy.core.services.implementations;
 import banca.uy.core.db.TombolaDAO;
 import banca.uy.core.entity.Tombola;
 import banca.uy.core.repository.ITombolaRepository;
+import banca.uy.core.services.interfaces.ICincoDeOroService;
 import banca.uy.core.services.interfaces.IEnviarPeticionApiDeLaBancaService;
 import banca.uy.core.services.interfaces.ITombolaService;
 import banca.uy.core.utils.Meses;
@@ -12,33 +13,29 @@ import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
-public class TombolaService implements ITombolaService {
+public class CincoDeOroService implements ICincoDeOroService {
 
 	@Autowired
 	private ITombolaRepository tombolaRepository;
 
 	@Autowired
-	private TombolaDAO tombolaDAO;
-
-	@Autowired
 	IEnviarPeticionApiDeLaBancaService enviarPeticionApiDeLaBancaService;
 
-	private static final String ulrTombola = "/resultados/tombola/renderizar_info_sorteo";
+	private static final String ulrCincoDeOro = "/resultados/cincodeoro/renderizar_info_sorteo";
 
 	private final DateTimeFormatter formatter = DateTimeFormat.forPattern("YYYY-MM-dd");
 
-	public TombolaService(ITombolaRepository tombolaRepository) {
+	public CincoDeOroService(ITombolaRepository tombolaRepository) {
 		this.tombolaRepository = tombolaRepository;
 	}
 
 	public void completarBaseDeDatos(String fechaDeTirada){
-		String respuesta = enviarPeticionApiDeLaBancaService.enviarPeticionApiDeLaBanca(fechaDeTirada, ulrTombola);
+		String respuesta = enviarPeticionApiDeLaBancaService.enviarPeticionApiDeLaBanca(fechaDeTirada, ulrCincoDeOro);
 		if(!respuesta.contains("No se encontró información del sorteo para la fecha seleccionada")){
 			String mensaje = respuesta.substring(respuesta.indexOf("<h2>"));
 			mensaje = mensaje.substring(0, mensaje.indexOf("<div class=\\\"clear\\\">"));
@@ -57,7 +54,7 @@ public class TombolaService implements ITombolaService {
 		}
 	}
 
-	public Tombola salvarTirada(String tirada){
+	public void salvarTirada(String tirada){
 		String fechaTiradaToParse = formatearFecha(tirada.substring(0,tirada.indexOf("\\n")));
 		String tiradaTipoNumeros = tirada.substring(tirada.indexOf("\\n") + 2);
 		String tipoTirada = tiradaTipoNumeros.substring(0, tiradaTipoNumeros.indexOf("\\n"));
@@ -72,7 +69,7 @@ public class TombolaService implements ITombolaService {
 		DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/YYYY");
 		DateTime fechaTirada = formatter.parseDateTime(fechaTiradaToParse);
 
-		Tombola tombola = tombolaRepository.findFirstByFechaTirada(fechaTirada);
+		/*Tombola tombola = tombolaRepository.findFirstByFechaTirada(fechaTirada);
 		if(tombola == null){
 			tombola = new Tombola(fechaTirada);
 		}
@@ -81,14 +78,13 @@ public class TombolaService implements ITombolaService {
 			tombola.setSorteoVespertino(numerosTiradaSalvar);
 		} else {
 			tombola.setSorteoNocturno(numerosTiradaSalvar);
-		}
-		 return this.tombolaDAO.save(tombola);
+		}*/
 	}
 
 
 	@Override
 	public void actualizarBaseDeDatos(String fechaActualizacion) throws InterruptedException {
-		Calendar calendar = Calendar.getInstance(); // this would default to now
+		Calendar calendar = Calendar.getInstance();
 		DateTime fechaParada = formatter.parseDateTime(fechaActualizacion);
 		while(new DateTime(calendar).isAfter(fechaParada)){
 			DateTime fehaTirada = new DateTime(calendar);
@@ -101,83 +97,6 @@ public class TombolaService implements ITombolaService {
 			TimeUnit.SECONDS.sleep(1);
 			calendar.add(Calendar.DAY_OF_MONTH, -1);
 		}
-	}
-
-	public Set<Integer> getJugada(String fecha){
-		DateTime fechaTirada = new DateTime();
-		if(!fecha.equals("")) {
-			fechaTirada = formatter.parseDateTime(fecha);
-		}
-		Set<Integer> jugada = new HashSet<>();
-		List<Tombola> ultimosSorteos = tombolaDAO.findAllSortByFechaTirada(fechaTirada);
-		List<Integer> numerosFinal = new ArrayList<>();
-		List<Integer> numerosPosiblesNoSalen = new ArrayList<>();
-		for (Tombola tombola: ultimosSorteos) {
-			for (Integer numero: tombola.getSorteoNocturno()) {
-				if(numerosFinal.size() < 40){
-					numerosFinal.add(numero);
-				}else{
-					break;
-				}
-			}
-
-			for (Integer numero: tombola.getSorteoVespertino()) {
-				if(numerosFinal.size() < 40){
-					numerosFinal.add(numero);
-				}else{
-					break;
-				}
-			}
-
-			if(numerosFinal.size() == 40){
-				break;
-			}
-		}
-		for (Integer numero: numerosFinal) {
-			numerosPosiblesNoSalen.add(numero);
-			numerosPosiblesNoSalen.add(101 - numero);
-		}
-		for (int i = 0; i < 100; i ++) {
-			if(!numerosPosiblesNoSalen.contains(i)){
-				jugada.add(i);
-			}
-		}
-		return jugada;
-	}
-
-	public List<String> getJugadaRepetidas(String fecha){
-		DateTime fechaTirada = new DateTime();
-		if(!fecha.equals("")) {
-			fechaTirada = formatter.parseDateTime(fecha);
-		}
-		List<Tombola> ultimosSorteos = tombolaDAO.findAllSortByFechaTirada(fechaTirada);
-		HashMap<String, Integer> cantidadDeVecesRepetido = new HashMap<>();
-		for (Tombola tombola: ultimosSorteos) {
-			for (Integer numero : tombola.getSorteoNocturno()) {
-				if (cantidadDeVecesRepetido.containsKey(numero.toString())) {
-					cantidadDeVecesRepetido.put(numero.toString(), (cantidadDeVecesRepetido.get(numero.toString()) + 1));
-				} else {
-					cantidadDeVecesRepetido.put(numero.toString(), 1);
-				}
-			}
-
-			for (Integer numero : tombola.getSorteoVespertino()) {
-				if (cantidadDeVecesRepetido.containsKey(numero.toString())) {
-					cantidadDeVecesRepetido.put(numero.toString(), (cantidadDeVecesRepetido.get(numero.toString()) + 1));
-				} else {
-					cantidadDeVecesRepetido.put(numero.toString(), 1);
-				}
-			}
-		}
-		List<String> cantidadDeVecesRepetidosOrdenados = new ArrayList<>();
-		for(int i = 0; i < 100; i++){
-			if(cantidadDeVecesRepetido.containsKey(Integer.toString(i))){
-				cantidadDeVecesRepetidosOrdenados.add(i, (Integer.toString(i) + " ---> "  +cantidadDeVecesRepetido.get(Integer.toString(i))));
-			}else{
-				cantidadDeVecesRepetidosOrdenados.add(i, Integer.toString(i) + " ---> 0");
-			}
-		}
-		return cantidadDeVecesRepetidosOrdenados;
 	}
 
 	public String formatearFecha(String fecha){

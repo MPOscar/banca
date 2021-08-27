@@ -1,9 +1,6 @@
 package banca.uy.core.db;
 
-import banca.uy.core.entity.Quiniela;
-import banca.uy.core.entity.Rol;
 import banca.uy.core.entity.Tombola;
-import banca.uy.core.repository.IRolRepository;
 import banca.uy.core.repository.ITombolaRepository;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +11,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class TombolaDAO {
@@ -38,6 +34,16 @@ public class TombolaDAO {
 		Query query = new Query();
 		List<Tombola> tombolaList = mongoOperations.find(query.with(Sort.by(Sort.Direction.DESC, "fechaTirada")).addCriteria(Criteria.where("fechaTirada").lte(fecha)).limit(10), Tombola.class);
 		return tombolaList;
+	}
+
+	public Tombola save(Tombola tombola){
+		tombola = tombolaRepository.save(tombola);
+		if(tombola.getSId() == null){
+			tombola.setSId(tombola.getId());
+			tombola = tombolaRepository.save(tombola);
+		}
+		return tombola;
+
 	}
 
 }

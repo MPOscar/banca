@@ -1,9 +1,7 @@
 package banca.uy.core.services.implementations;
 
 import banca.uy.core.db.QuinielaDAO;
-import banca.uy.core.db.TombolaDAO;
 import banca.uy.core.entity.Quiniela;
-import banca.uy.core.entity.Tombola;
 import banca.uy.core.repository.IQuinielaRepository;
 import banca.uy.core.services.interfaces.IQuinielaService;
 import org.joda.time.DateTime;
@@ -16,6 +14,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class QuinielaService implements IQuinielaService {
@@ -36,12 +35,7 @@ public class QuinielaService implements IQuinielaService {
 		String tipoTirada = tiradaTipoNumeros.substring(0, tiradaTipoNumeros.indexOf("\r\n"));
 		String numerosTirada = tiradaTipoNumeros.substring(tiradaTipoNumeros.indexOf("\r\n") + 2);
 		String [] numeros = numerosTirada.split("\r\n");
-		List<String> numerosList = Arrays.asList(numeros);
-		Set<Integer> numerosTiradaSalvar = new HashSet<>();
-		for (String numeroString: numerosList) {
-			int numero = Integer.parseInt(numeroString.substring(numeroString.indexOf(".") + 1));
-			numerosTiradaSalvar.add(numero);
-		}
+		List<Integer> numerosTiradaSalvar = Arrays.asList(numeros).stream().map(Integer::valueOf).collect(Collectors.toList());
 
 		boolean diurna = tipoTirada.indexOf("Vespertino") > -1 ? true : false;
 

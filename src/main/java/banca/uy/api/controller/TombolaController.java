@@ -40,8 +40,8 @@ public class TombolaController {
   @PostMapping("/tirada")
   public ResponseEntity saveTirada(@RequestBody String tirada) {
     try {
-      Tombola tombola = tombolaService.saveTirada(tirada);
-      return ok(tombola);
+      tombolaService.actualizarBaseDeDatos(tirada);
+      return ok("terminamos de actualizar la base de datos " + tirada);
     } catch (Exception ex) {
       logger.log(Level.ERROR, "precios controller @PostMapping(\"/excel/actualizar\") Error:", ex.getMessage(), ex.getStackTrace());
       this.errorService

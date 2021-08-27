@@ -5,39 +5,43 @@ import banca.uy.core.utils.serializer.CustomDateTimeSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.joda.time.DateTime;
+import org.springframework.data.mongodb.core.index.IndexDirection;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 @Document(collection = "Tombola")
 public class Tombola extends Entidad {
 
-	private Set<Integer> sorteoVespertino = new HashSet<>();
+	private List<Integer> sorteoVespertino = new ArrayList<>();
 
-	private Set<Integer> sorteoNocturno = new HashSet<>();
+	private List<Integer> sorteoNocturno = new ArrayList<>();
 
 	@JsonSerialize(using = CustomDateTimeSerializer.class)
 	@JsonDeserialize(using = CustomDateTimeDeserializer.class)
+	@Indexed(direction = IndexDirection.ASCENDING, unique = true)
 	protected DateTime fechaTirada;
 
 	public Tombola(DateTime fechaTirada) {
 		this.fechaTirada = fechaTirada;
 	}
 
-	public Set<Integer> getSorteoVespertino() {
+	public List<Integer> getSorteoVespertino() {
 		return sorteoVespertino;
 	}
 
-	public void setSorteoVespertino(Set<Integer> sorteoVespertino) {
+	public void setSorteoVespertino(List<Integer> sorteoVespertino) {
 		this.sorteoVespertino = sorteoVespertino;
 	}
 
-	public Set<Integer> getSorteoNocturno() {
+	public List<Integer> getSorteoNocturno() {
 		return sorteoNocturno;
 	}
 
-	public void setSorteoNocturno(Set<Integer> sorteoNocturno) {
+	public void setSorteoNocturno(List<Integer> sorteoNocturno) {
 		this.sorteoNocturno = sorteoNocturno;
 	}
 

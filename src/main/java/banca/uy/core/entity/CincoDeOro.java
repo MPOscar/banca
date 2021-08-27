@@ -5,23 +5,24 @@ import banca.uy.core.utils.serializer.CustomDateTimeSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.joda.time.DateTime;
+import org.springframework.data.mongodb.core.index.IndexDirection;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Document(collection = "CincoDeOro")
 public class CincoDeOro extends Entidad {
 
-	private String dia;
+	private List<Integer> cincoDeOro = new ArrayList<>();
 
-	private Set<Integer> diurna = new HashSet<>();
-
-	private Set<Integer> nocturna = new HashSet<>();
+	private List<Integer> rebancha = new ArrayList<>();
 
 	@JsonSerialize(using = CustomDateTimeSerializer.class)
 	@JsonDeserialize(using = CustomDateTimeDeserializer.class)
-	protected DateTime fecha;
+	@Indexed(direction = IndexDirection.ASCENDING, unique = true)
+	protected DateTime fechaTirada;
 
 	public CincoDeOro() {
 		super();
