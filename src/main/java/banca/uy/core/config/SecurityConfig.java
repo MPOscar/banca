@@ -49,6 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/v2/api-docs/**").permitAll()
                 .antMatchers("/auth/signin").permitAll()
                 .antMatchers("/tombola/**").permitAll()
+                .antMatchers("/cincoDeOro/**").permitAll()
                 .antMatchers("/quiniela/**").permitAll()
                 .anyRequest().authenticated()
                 .and()

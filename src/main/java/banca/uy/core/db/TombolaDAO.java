@@ -24,11 +24,15 @@ public class TombolaDAO {
 		this.mongoOperations = mongoOperations;
 	}
 
-	public List<Tombola> findAllSortByFechaTirada() {
+	public Tombola obtenerUltimaJugadaCompleta() {
 		Query query = new Query();
-		List<Tombola> tombolaList = mongoOperations.find(query.with(Sort.by(Sort.Direction.DESC, "fechaTirada")), Tombola.class);
-		return tombolaList;
+		query.with(Sort.by(Sort.Direction.DESC, "fechaTirada"));
+		query.limit(2);
+		List<Tombola> tombolaList = mongoOperations.find(query, Tombola.class);
+		Tombola tombola = tombolaList.size() > 1 ? tombolaList.get(1) : new Tombola();
+		return tombola;
 	}
+
 
 	public List<Tombola> findAllSortByFechaTirada(DateTime fecha) {
 		Query query = new Query();

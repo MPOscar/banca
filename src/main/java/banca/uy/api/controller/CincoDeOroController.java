@@ -33,10 +33,10 @@ public class CincoDeOroController {
     this.authenticationFacade = authenticationFacade;
   }
 
-  @PostMapping("/completarBaseDeDatos")
-  public ResponseEntity saveTirada(@RequestBody String tirada) {
+  @PostMapping("/inicializarBaseDeDatos")
+  public ResponseEntity inicializarBaseDeDatos(@RequestBody String tirada) {
     try {
-      cincoDeOroService.actualizarBaseDeDatos(tirada);
+      cincoDeOroService.inicializarBaseDeDatos(tirada);
       return ok("terminamos de actualizar la base de datos " + tirada);
     } catch (Exception ex) {
       logger.log(Level.ERROR, "precios controller @PostMapping(\"/excel/actualizar\") Error:", ex.getMessage(), ex.getStackTrace());
@@ -45,6 +45,21 @@ public class CincoDeOroController {
       throw new WebApplicationException("Ocurrió un error al actualizar los productos - " + ex.getMessage(),
               HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
+  }
+
+  @PostMapping("/actualizarBaseDeDatos")
+  public ResponseEntity actualizarBaseDeDatos() {
+    try {
+      cincoDeOroService.actualizarBaseDeDatos();
+      return ok("terminamos de actualizar la base de datos");
+    } catch (Exception ex) {
+      logger.log(Level.ERROR, "precios controller @PostMapping(\"/excel/actualizar\") Error:", ex.getMessage(), ex.getStackTrace());
+      this.errorService
+              .Log("AtributosLaboratorioController controller @PostMapping(\"/excel/actualizar\") Error: " + ex.getMessage(), " StackTrace: " + ex.getStackTrace());
+      throw new WebApplicationException("Ocurrió un error al actualizar los productos - " + ex.getMessage(),
+              HttpStatus.INTERNAL_SERVER_ERROR.value());
+    }
+
   }
 
 }

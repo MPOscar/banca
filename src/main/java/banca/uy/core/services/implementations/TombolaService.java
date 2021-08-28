@@ -12,7 +12,6 @@ import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -37,7 +36,7 @@ public class TombolaService implements ITombolaService {
 		this.tombolaRepository = tombolaRepository;
 	}
 
-	public void completarBaseDeDatos(String fechaDeTirada){
+	public void obtenerTiradaYGuardarEnBaseDeDatos(String fechaDeTirada){
 		String respuesta = enviarPeticionApiDeLaBancaService.enviarPeticionApiDeLaBanca(fechaDeTirada, ulrTombola);
 		if(!respuesta.contains("No se encontró información del sorteo para la fecha seleccionada")){
 			String mensaje = respuesta.substring(respuesta.indexOf("<h2>"));
@@ -87,17 +86,28 @@ public class TombolaService implements ITombolaService {
 
 
 	@Override
-	public void actualizarBaseDeDatos(String fechaActualizacion) throws InterruptedException {
-		Calendar calendar = Calendar.getInstance(); // this would default to now
+	public void inicializarBaseDeDatos(String fechaActualizacion) throws InterruptedException {
 		DateTime fechaParada = formatter.parseDateTime(fechaActualizacion);
+		actualizarHastaFechaSeleccionada(fechaParada);
+	}
+
+	@Override
+	public void actualizarBaseDeDatos() throws InterruptedException {
+		Tombola tombola = tombolaDAO.obtenerUltimaJugadaCompleta();
+		DateTime fechaParada = tombola.getFechaTirada();
+		actualizarHastaFechaSeleccionada(fechaParada);
+	}
+
+	public void actualizarHastaFechaSeleccionada(DateTime fechaParada) throws InterruptedException {
+		Calendar calendar = Calendar.getInstance();
 		while(new DateTime(calendar).isAfter(fechaParada)){
 			DateTime fehaTirada = new DateTime(calendar);
 			String parametro = formatter.print(fehaTirada);
 			String tiradaVespertina = parametro + "-15:00";
 			String tiradaNocturna = parametro + "-21:00";
-			completarBaseDeDatos(tiradaVespertina);
+			obtenerTiradaYGuardarEnBaseDeDatos(tiradaVespertina);
 			TimeUnit.SECONDS.sleep(1);
-			completarBaseDeDatos(tiradaNocturna);
+			obtenerTiradaYGuardarEnBaseDeDatos(tiradaNocturna);
 			TimeUnit.SECONDS.sleep(1);
 			calendar.add(Calendar.DAY_OF_MONTH, -1);
 		}

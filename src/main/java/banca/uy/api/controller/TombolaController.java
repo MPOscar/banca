@@ -1,6 +1,5 @@
 package banca.uy.api.controller;
 
-import banca.uy.core.entity.Tombola;
 import banca.uy.core.security.IAuthenticationFacade;
 import banca.uy.core.services.interfaces.IErrorService;
 import banca.uy.core.services.interfaces.ITombolaService;
@@ -37,11 +36,25 @@ public class TombolaController {
     this.authenticationFacade = authenticationFacade;
   }
 
-  @PostMapping("/tirada")
-  public ResponseEntity saveTirada(@RequestBody String tirada) {
+  @PostMapping("/inicializarBaseDeDatos")
+  public ResponseEntity inicializarBaseDeDatos(@RequestBody String tirada) {
     try {
-      tombolaService.actualizarBaseDeDatos(tirada);
+      tombolaService.inicializarBaseDeDatos(tirada);
       return ok("terminamos de actualizar la base de datos " + tirada);
+    } catch (Exception ex) {
+      logger.log(Level.ERROR, "precios controller @PostMapping(\"/excel/actualizar\") Error:", ex.getMessage(), ex.getStackTrace());
+      this.errorService
+              .Log("AtributosLaboratorioController controller @PostMapping(\"/excel/actualizar\") Error: " + ex.getMessage(), " StackTrace: " + ex.getStackTrace());
+      throw new WebApplicationException("Ocurrió un error al actualizar los productos - " + ex.getMessage(),
+              HttpStatus.INTERNAL_SERVER_ERROR.value());
+    }
+  }
+
+  @PostMapping("/actualizarBaseDeDatos")
+  public ResponseEntity actualizarBaseDeDatos() {
+    try {
+      tombolaService.actualizarBaseDeDatos();
+      return ok("terminamos de actualizar la base de datos");
     } catch (Exception ex) {
       logger.log(Level.ERROR, "precios controller @PostMapping(\"/excel/actualizar\") Error:", ex.getMessage(), ex.getStackTrace());
       this.errorService

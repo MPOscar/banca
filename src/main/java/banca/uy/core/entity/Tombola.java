@@ -25,6 +25,9 @@ public class Tombola extends Entidad {
 	@Indexed(direction = IndexDirection.ASCENDING, unique = true)
 	protected DateTime fechaTirada;
 
+	public Tombola() {
+	}
+
 	public Tombola(DateTime fechaTirada) {
 		this.fechaTirada = fechaTirada;
 	}

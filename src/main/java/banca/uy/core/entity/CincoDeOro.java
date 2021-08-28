@@ -28,6 +28,34 @@ public class CincoDeOro extends Entidad {
 		super();
 	}
 
+	public CincoDeOro(DateTime fechaTirada) {
+		this.fechaTirada = fechaTirada;
+	}
+
+	public List<Integer> getCincoDeOro() {
+		return cincoDeOro;
+	}
+
+	public void setCincoDeOro(List<Integer> cincoDeOro) {
+		this.cincoDeOro = cincoDeOro;
+	}
+
+	public List<Integer> getRebancha() {
+		return rebancha;
+	}
+
+	public void setRebancha(List<Integer> rebancha) {
+		this.rebancha = rebancha;
+	}
+
+	public DateTime getFechaTirada() {
+		return fechaTirada;
+	}
+
+	public void setFechaTirada(DateTime fechaTirada) {
+		this.fechaTirada = fechaTirada;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
