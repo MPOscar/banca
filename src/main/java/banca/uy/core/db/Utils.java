@@ -16,12 +16,11 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.ws.rs.core.MultivaluedMap;
 
-import banca.uy.core.resources.dto.PaginadoRequest;
-import org.hibernate.Session;
-
-import banca.uy.core.exceptions.ModelException;
 import banca.uy.core.entity.Entidad;
+import banca.uy.core.exceptions.ModelException;
+import banca.uy.core.resources.dto.PaginadoRequest;
 import banca.uy.core.resources.dto.PaginadoResponse;
+import org.hibernate.Session;
 
 public class Utils {
 
@@ -149,7 +148,7 @@ public class Utils {
 	 * @throws ModelException
 	 */
 	public static <T> PaginadoResponse<List<T>> paginar(final PaginadoRequest paginadoRequest,
-			final TypedQuery<T> selectQuery, final Long total, Session session) throws ModelException {
+                                                        final TypedQuery<T> selectQuery, final Long total, Session session) throws ModelException {
 		PaginadoResponse<List<T>> response = new PaginadoResponse<List<T>>(paginadoRequest.getPagina(),
 				paginadoRequest.getCantidad(), total);
 

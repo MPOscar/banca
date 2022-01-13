@@ -1,8 +1,8 @@
 package banca.uy.core.services.implementations;
 
+import banca.uy.core.repository.IQuinielaRepository;
 import banca.uy.core.db.QuinielaDAO;
 import banca.uy.core.entity.Quiniela;
-import banca.uy.core.repository.IQuinielaRepository;
 import banca.uy.core.services.interfaces.IQuinielaService;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;

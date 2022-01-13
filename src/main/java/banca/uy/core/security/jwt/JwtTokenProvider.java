@@ -1,5 +1,6 @@
 package banca.uy.core.security.jwt;
 
+import banca.uy.core.security.CustomUserDetailsService;
 import banca.uy.core.db.ParamsDAO;
 import banca.uy.core.entity.Param;
 import banca.uy.core.entity.Usuario;
@@ -12,7 +13,6 @@ import org.jose4j.jwt.JwtClaims;
 import org.jose4j.keys.HmacKey;
 import org.jose4j.lang.JoseException;
 import org.springframework.beans.factory.annotation.Autowired;
-import banca.uy.core.security.CustomUserDetailsService;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

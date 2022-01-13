@@ -1,14 +1,10 @@
 package banca.uy.core.services.interfaces;
 
-import java.util.List;
-import java.util.Optional;
-
-import banca.uy.core.resources.dto.UsuarioBasic;
-import banca.uy.core.entity.Usuario;
-import banca.uy.core.exceptions.ModelException;
 import banca.uy.core.exceptions.ServiceException;
 import banca.uy.core.resources.dto.LoginResponse;
+import banca.uy.core.resources.dto.UsuarioBasic;
 import banca.uy.core.resources.dto.UsuarioPrincipal;
+import banca.uy.core.entity.Usuario;
 import org.jose4j.lang.JoseException;
 
 public interface IUserService {

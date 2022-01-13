@@ -2,11 +2,10 @@ package banca.uy.core.services.interfaces;
 
 import java.util.Optional;
 
-import banca.uy.core.resources.dto.UsuarioBasic;
-import banca.uy.core.entity.Usuario;
 import banca.uy.core.exceptions.ServiceException;
 import banca.uy.core.resources.dto.LoginResponse;
-import banca.uy.core.resources.dto.UsuarioPrincipal;
+import banca.uy.core.resources.dto.UsuarioBasic;
+import banca.uy.core.entity.Usuario;
 
 public interface ILoginService {
 	LoginResponse LoginBasic(UsuarioBasic usuario) throws ServiceException, Exception;

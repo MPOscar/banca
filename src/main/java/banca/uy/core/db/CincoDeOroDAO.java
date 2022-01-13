@@ -1,13 +1,10 @@
 package banca.uy.core.db;
 
 import banca.uy.core.entity.CincoDeOro;
-import banca.uy.core.entity.Tombola;
 import banca.uy.core.repository.ICincoDeOroRepository;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +14,7 @@ import java.util.List;
 public class CincoDeOroDAO {
 
 	@Autowired
-	ICincoDeOroRepository cincoDeOroRepository;
+    ICincoDeOroRepository cincoDeOroRepository;
 
 	private final MongoOperations mongoOperations;
 

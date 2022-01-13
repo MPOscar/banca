@@ -1,6 +1,5 @@
 package banca.uy.core.utils;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.DefaultValue;
 

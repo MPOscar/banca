@@ -16,7 +16,7 @@ import java.util.List;
 public class TombolaDAO {
 
 	@Autowired
-	ITombolaRepository tombolaRepository;
+    ITombolaRepository tombolaRepository;
 
 	private final MongoOperations mongoOperations;
 

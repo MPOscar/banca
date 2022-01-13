@@ -2,8 +2,9 @@ package banca.uy.core.auth.jwt;
 
 import java.util.Optional;
 
-import banca.uy.core.db.UsuariosDAO;
+import banca.uy.core.entity.Usuario;
 import banca.uy.core.resources.dto.UsuarioJwt;
+import banca.uy.core.db.UsuariosDAO;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.context.internal.ManagedSessionContext;
@@ -12,7 +13,6 @@ import org.jose4j.jwt.consumer.JwtContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import banca.uy.core.entity.Usuario;
 import io.dropwizard.auth.Authenticator;
 
 public class JwtAuthenticator implements Authenticator<JwtContext, UsuarioJwt> {

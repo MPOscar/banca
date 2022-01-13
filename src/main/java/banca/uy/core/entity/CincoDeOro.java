@@ -19,6 +19,18 @@ public class CincoDeOro extends Entidad {
 
 	private List<Integer> rebancha = new ArrayList<>();
 
+	private String pozoDeOro;
+
+	private String pozoDePlata;
+
+	private String pozoDeRevancha;
+
+	private String numeroAciertosPozoDeOro;
+
+	private String numeroAciertosPozoDePlata;
+
+	private String numeroAciertosPozoRevancha;
+
 	@JsonSerialize(using = CustomDateTimeSerializer.class)
 	@JsonDeserialize(using = CustomDateTimeDeserializer.class)
 	@Indexed(direction = IndexDirection.ASCENDING, unique = true)
@@ -56,17 +68,51 @@ public class CincoDeOro extends Entidad {
 		this.fechaTirada = fechaTirada;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		CincoDeOro other = (CincoDeOro) obj;
-		if (other.getId().equals(this.getId()))
-			return true;
-		return false;
+	public String getPozoDeOro() {
+		return pozoDeOro;
+	}
+
+	public void setPozoDeOro(String pozoDeOro) {
+		this.pozoDeOro = pozoDeOro;
+	}
+
+	public String getPozoDePlata() {
+		return pozoDePlata;
+	}
+
+	public void setPozoDePlata(String pozoDePlata) {
+		this.pozoDePlata = pozoDePlata;
+	}
+
+	public String getPozoDeRevancha() {
+		return pozoDeRevancha;
+	}
+
+	public void setPozoDeRevancha(String pozoDeRevancha) {
+		this.pozoDeRevancha = pozoDeRevancha;
+	}
+
+	public String getNumeroAciertosPozoDeOro() {
+		return numeroAciertosPozoDeOro;
+	}
+
+	public void setNumeroAciertosPozoDeOro(String numeroAciertosPozoDeOro) {
+		this.numeroAciertosPozoDeOro = numeroAciertosPozoDeOro;
+	}
+
+	public String getNumeroAciertosPozoDePlata() {
+		return numeroAciertosPozoDePlata;
+	}
+
+	public void setNumeroAciertosPozoDePlata(String numeroAciertosPozoDePlata) {
+		this.numeroAciertosPozoDePlata = numeroAciertosPozoDePlata;
+	}
+
+	public String getNumeroAciertosPozoRevancha() {
+		return numeroAciertosPozoRevancha;
+	}
+
+	public void setNumeroAciertosPozoRevancha(String numeroAciertosPozoRevancha) {
+		this.numeroAciertosPozoRevancha = numeroAciertosPozoRevancha;
 	}
 }

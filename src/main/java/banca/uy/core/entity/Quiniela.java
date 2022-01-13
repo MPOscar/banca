@@ -8,9 +8,7 @@ import org.joda.time.DateTime;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Document(collection = "Quiniela")
 public class Quiniela extends Entidad {

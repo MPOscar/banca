@@ -4,19 +4,18 @@ import java.util.List;
 import java.util.Optional;
 
 import banca.uy.core.entity.Rol;
+import banca.uy.core.repository.IRolRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
-import banca.uy.core.repository.IRolRepository;
-
 @Component
 public class RolesDAO {
 
 	@Autowired
-	IRolRepository rolRepository;
+    IRolRepository rolRepository;
 
 	private final MongoOperations mongoOperations;
 

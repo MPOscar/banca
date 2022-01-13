@@ -1,7 +1,5 @@
 package banca.uy.core.services.interfaces;
 
-import banca.uy.core.entity.Tombola;
-
 import java.util.List;
 import java.util.Set;
 

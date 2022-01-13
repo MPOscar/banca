@@ -1,10 +1,10 @@
 package banca.uy.core.services.implementations;
 
+import banca.uy.core.repository.ICincoDeOroRepository;
+import banca.uy.core.services.interfaces.IEnviarPeticionApiDeLaBancaService;
 import banca.uy.core.db.CincoDeOroDAO;
 import banca.uy.core.entity.CincoDeOro;
-import banca.uy.core.repository.ICincoDeOroRepository;
 import banca.uy.core.services.interfaces.ICincoDeOroService;
-import banca.uy.core.services.interfaces.IEnviarPeticionApiDeLaBancaService;
 import banca.uy.core.utils.Meses;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -22,7 +22,7 @@ public class CincoDeOroService implements ICincoDeOroService {
 	private ICincoDeOroRepository cincoDeOroRepository;
 
 	@Autowired
-	IEnviarPeticionApiDeLaBancaService enviarPeticionApiDeLaBancaService;
+    IEnviarPeticionApiDeLaBancaService enviarPeticionApiDeLaBancaService;
 
 	@Autowired
 	private CincoDeOroDAO cincoDeOroDAO;
@@ -41,9 +41,12 @@ public class CincoDeOroService implements ICincoDeOroService {
 			String mensaje = respuesta.substring(respuesta.indexOf("<h2>"));
 			String fechaCincoDeOro = mensaje.substring(0, mensaje.indexOf("<\\/h2>")).replace("<h2>", "");
 			List<Integer> numerosCincoDeOro = obtenerNumerosCincoDeOro(mensaje);
-			salvarTirada(fechaCincoDeOro, numerosCincoDeOro);
+			List<String> pozosAcumulados = obtenerPozosAcumulados(mensaje);
+			List<String> numeroDeAciertos = obtenerNumeroDeAciertos(mensaje);
+			salvarTirada(fechaCincoDeOro, numerosCincoDeOro, pozosAcumulados, numeroDeAciertos);
 		}
 	}
+
 
 	public List<Integer> obtenerNumerosCincoDeOro(String mensaje){
 		List<Integer> numerosCincoDeOro = new ArrayList<>();
@@ -58,6 +61,32 @@ public class CincoDeOroService implements ICincoDeOroService {
 		return numerosCincoDeOro;
 	}
 
+	public List<String> obtenerPozosAcumulados(String mensaje){
+		List<String> pozosAcumulados = new ArrayList<>();
+		for (int i = 0; i < 3; i++){
+			int index = mensaje.indexOf(">$ ");
+			mensaje = mensaje.substring(index);
+			index = mensaje.indexOf("<\\/span>");
+			String montoAcumulado = mensaje.substring(3, index);
+			pozosAcumulados.add(i, montoAcumulado);
+			mensaje = mensaje.substring(index);
+		}
+		return pozosAcumulados;
+	}
+
+	public List<String> obtenerNumeroDeAciertos (String mensaje){
+		List<String> numeroDeAciertos = new ArrayList<>();
+		for (int i = 0; i < 3; i++){
+			int index = mensaje.indexOf("class=\\\"aciertos\\\">(");
+			mensaje = mensaje.substring(index);
+			index = mensaje.indexOf(" ");
+			String aciertos = mensaje.substring(20, index);
+			numeroDeAciertos.add(i, aciertos);
+			mensaje = mensaje.substring(index);
+		}
+		return numeroDeAciertos;
+	}
+
 	public int obtenerNumero(String numeroString){
 		int numero = 0;
 		try {
@@ -68,7 +97,7 @@ public class CincoDeOroService implements ICincoDeOroService {
 		return numero;
 	}
 
-	public void salvarTirada(String fecha, List<Integer> numeros){
+	public void salvarTirada(String fecha, List<Integer> numeros, List<String> pozosAcumulados, List<String> numeroDeAciertos){
 		String fechaTiradaToParse = formatearFecha(fecha);
 
 		List<Integer> numerosCincoDeOro = numeros.subList(0, 6);
@@ -83,6 +112,15 @@ public class CincoDeOroService implements ICincoDeOroService {
 		}
 		cincoDeOro.setCincoDeOro(numerosCincoDeOro);
 		cincoDeOro.setRebancha(numerosCincoDeOroRebancha);
+
+		cincoDeOro.setPozoDeOro(pozosAcumulados.get(0));
+		cincoDeOro.setPozoDePlata(pozosAcumulados.get(1));
+		cincoDeOro.setPozoDeRevancha(pozosAcumulados.get(2));
+
+		cincoDeOro.setNumeroAciertosPozoDeOro(numeroDeAciertos.get(0));
+		cincoDeOro.setNumeroAciertosPozoDePlata(numeroDeAciertos.get(1));
+		cincoDeOro.setNumeroAciertosPozoRevancha(numeroDeAciertos.get(2));
+
 		cincoDeOroDAO.save(cincoDeOro);
 	}
 

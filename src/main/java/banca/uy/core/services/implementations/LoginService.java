@@ -4,31 +4,25 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
+import banca.uy.core.exceptions.ServiceException;
+import banca.uy.core.resources.dto.LoginResponse;
+import banca.uy.core.resources.dto.UsuarioBasic;
 import banca.uy.core.db.ParamsDAO;
 import banca.uy.core.entity.Param;
-import banca.uy.core.resources.dto.UsuarioBasic;
 import banca.uy.core.services.interfaces.ILoginService;
 import com.google.common.hash.Hashing;
 
 import banca.uy.core.db.UsuariosDAO;
-import banca.uy.core.exceptions.ServiceException;
-import banca.uy.core.resources.dto.LoginResponse;
-import banca.uy.core.resources.dto.UsuarioPrincipal;
 import banca.uy.core.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.jose4j.jwe.JsonWebEncryption;
-import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
-import org.jose4j.jwt.JwtClaims;
-import org.jose4j.keys.HmacKey;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
-import banca.uy.core.entity.Rol;
 import banca.uy.core.entity.Usuario;
 
 import javax.transaction.Transactional;

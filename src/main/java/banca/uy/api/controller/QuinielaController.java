@@ -1,11 +1,8 @@
 package banca.uy.api.controller;
 
 import banca.uy.core.entity.Quiniela;
-import banca.uy.core.entity.Tombola;
 import banca.uy.core.security.IAuthenticationFacade;
-import banca.uy.core.services.interfaces.IErrorService;
 import banca.uy.core.services.interfaces.IQuinielaService;
-import banca.uy.core.services.interfaces.ITombolaService;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,9 +23,6 @@ public class QuinielaController {
   Logger logger = LogManager.getLogger(QuinielaController.class);
 
   @Autowired
-  private IErrorService errorService;
-
-  @Autowired
   IQuinielaService quinielaService;
 
   private final IAuthenticationFacade authenticationFacade;
@@ -44,8 +38,6 @@ public class QuinielaController {
       return ok(quiniela);
     } catch (Exception ex) {
       logger.log(Level.ERROR, "precios controller @PostMapping(\"/excel/actualizar\") Error:", ex.getMessage(), ex.getStackTrace());
-      this.errorService
-              .Log("AtributosLaboratorioController controller @PostMapping(\"/excel/actualizar\") Error: " + ex.getMessage(), " StackTrace: " + ex.getStackTrace());
       throw new WebApplicationException("Ocurrió un error al actualizar los productos - " + ex.getMessage(),
               HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
@@ -58,8 +50,6 @@ public class QuinielaController {
       return ok(jugada);
     } catch (Exception ex) {
       logger.log(Level.ERROR, "precios controller @PostMapping(\"/excel/actualizar\") Error:", ex.getMessage(), ex.getStackTrace());
-      this.errorService
-              .Log("AtributosLaboratorioController controller @PostMapping(\"/excel/actualizar\") Error: " + ex.getMessage(), " StackTrace: " + ex.getStackTrace());
       throw new WebApplicationException("Ocurrió un error al actualizar los productos - " + ex.getMessage(),
               HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
@@ -72,8 +62,6 @@ public class QuinielaController {
       return ok(jugada);
     } catch (Exception ex) {
       logger.log(Level.ERROR, "precios controller @PostMapping(\"/excel/actualizar\") Error:", ex.getMessage(), ex.getStackTrace());
-      this.errorService
-              .Log("AtributosLaboratorioController controller @PostMapping(\"/excel/actualizar\") Error: " + ex.getMessage(), " StackTrace: " + ex.getStackTrace());
       throw new WebApplicationException("Ocurrió un error al actualizar los productos - " + ex.getMessage(),
               HttpStatus.INTERNAL_SERVER_ERROR.value());
     }

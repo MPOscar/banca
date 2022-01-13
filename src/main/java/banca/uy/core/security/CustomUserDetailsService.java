@@ -1,9 +1,8 @@
 package banca.uy.core.security;
 
-import banca.uy.core.entity.Rol;
-import banca.uy.core.entity.Usuario;
 import banca.uy.core.repository.IUserRepository;
 import banca.uy.core.resources.dto.UsuarioPrincipal;
+import banca.uy.core.entity.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

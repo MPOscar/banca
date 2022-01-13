@@ -1,9 +1,9 @@
 package banca.uy.core.services.implementations;
 
-import banca.uy.core.db.TombolaDAO;
-import banca.uy.core.entity.Tombola;
 import banca.uy.core.repository.ITombolaRepository;
 import banca.uy.core.services.interfaces.IEnviarPeticionApiDeLaBancaService;
+import banca.uy.core.db.TombolaDAO;
+import banca.uy.core.entity.Tombola;
 import banca.uy.core.services.interfaces.ITombolaService;
 import banca.uy.core.utils.Meses;
 import org.joda.time.DateTime;
@@ -26,7 +26,7 @@ public class TombolaService implements ITombolaService {
 	private TombolaDAO tombolaDAO;
 
 	@Autowired
-	IEnviarPeticionApiDeLaBancaService enviarPeticionApiDeLaBancaService;
+    IEnviarPeticionApiDeLaBancaService enviarPeticionApiDeLaBancaService;
 
 	private static final String ulrTombola = "/resultados/tombola/renderizar_info_sorteo";
 

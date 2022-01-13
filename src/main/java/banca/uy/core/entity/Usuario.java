@@ -7,7 +7,6 @@ import org.joda.time.DateTime;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.ws.rs.core.Link;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;

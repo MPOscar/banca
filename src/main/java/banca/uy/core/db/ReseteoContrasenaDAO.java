@@ -4,19 +4,18 @@ import java.util.List;
 import java.util.Optional;
 
 import banca.uy.core.entity.ReseteoContrasena;
+import banca.uy.core.repository.IReseteoContrasenaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
-import banca.uy.core.repository.IReseteoContrasenaRepository;
-
 @Component
 public class ReseteoContrasenaDAO {
 
 	@Autowired
-	IReseteoContrasenaRepository reseteoContrasenaRepository;
+    IReseteoContrasenaRepository reseteoContrasenaRepository;
 
 	private final MongoOperations mongoOperations;
 

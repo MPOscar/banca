@@ -1,9 +1,7 @@
 package banca.uy.core.db;
 
 import banca.uy.core.entity.Quiniela;
-import banca.uy.core.entity.Tombola;
 import banca.uy.core.repository.IQuinielaRepository;
-import banca.uy.core.repository.ITombolaRepository;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -18,7 +16,7 @@ import java.util.List;
 public class QuinielaDAO {
 
 	@Autowired
-	IQuinielaRepository quinielaRepository;
+    IQuinielaRepository quinielaRepository;
 
 	private final MongoOperations mongoOperations;
 

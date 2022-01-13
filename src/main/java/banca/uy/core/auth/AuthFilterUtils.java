@@ -1,8 +1,8 @@
 package banca.uy.core.auth;
 
+import banca.uy.core.resources.dto.UsuarioJwt;
 import banca.uy.core.db.ParamsDAO;
 import banca.uy.core.db.UsuariosDAO;
-import banca.uy.core.resources.dto.UsuarioJwt;
 import org.hibernate.SessionFactory;
 import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
