@@ -137,6 +137,12 @@ public class CincoDeOroService implements ICincoDeOroService {
 		actualizarHastaFechaSeleccionada(fechaParada);
 	}
 
+	@Override
+	public CincoDeOro obtenerUltimaJugada() throws InterruptedException {
+		CincoDeOro cincoDeOro = cincoDeOroDAO.obtenerUltimaJugadaCompleta();
+		return cincoDeOro;
+	}
+
 	public void actualizarHastaFechaSeleccionada(DateTime fechaParada) throws InterruptedException {
 		Calendar calendar = Calendar.getInstance();
 		while(new DateTime(calendar).isAfter(fechaParada)){
