@@ -10,6 +10,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -131,6 +132,7 @@ public class CincoDeOroService implements ICincoDeOroService {
 	}
 
 	@Override
+	@Scheduled(cron = "${cronExpressionActualizarBaseDeDatos}")
 	public void actualizarBaseDeDatos() throws InterruptedException {
 		CincoDeOro cincoDeOro = cincoDeOroDAO.obtenerUltimaJugadaCompleta();
 		DateTime fechaParada = cincoDeOro.getFechaTirada();

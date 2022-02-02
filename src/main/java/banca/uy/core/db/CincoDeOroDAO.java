@@ -27,7 +27,7 @@ public class CincoDeOroDAO {
 		query.with(Sort.by(Sort.Direction.DESC, "fechaTirada"));
 		query.limit(2);
 		List<CincoDeOro> cincoDeOroList = mongoOperations.find(query, CincoDeOro.class);
-		CincoDeOro cincoDeOro = cincoDeOroList.size() > 1 ? cincoDeOroList.get(1) : new CincoDeOro();
+		CincoDeOro cincoDeOro = cincoDeOroList.size() > 1 ? cincoDeOroList.get(0) : new CincoDeOro();
 		return cincoDeOro;
 	}
 
