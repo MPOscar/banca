@@ -71,6 +71,21 @@ public class CincoDeOroController {
     }
   }
 
+  @GetMapping("/obtenerUltimasJugadas")
+  public Representacion<List<CincoDeOro>> obtenerUltimasJugadas(
+          @RequestParam(defaultValue = "1") int page,
+          @RequestParam(defaultValue = "4") int size
+  ) {
+    try {
+      List<CincoDeOro> ultimasJugadas = cincoDeOroService.obtenerUltimasJugadas(page, size);
+      return new Representacion<>(HttpStatus.OK.value(), ultimasJugadas);
+    } catch (Exception ex) {
+      logger.log(Level.ERROR, "precios controller @PostMapping(\"/excel/actualizar\") Error:", ex.getMessage(), ex.getStackTrace());
+      throw new WebApplicationException("Ocurrió un error al actualizar los productos - " + ex.getMessage(),
+              HttpStatus.INTERNAL_SERVER_ERROR.value());
+    }
+  }
+
   @GetMapping("/obtenerJugadasCincoDeOroConMayorNumeroDeCoincidencias")
   public Representacion<HashMap<Integer, List<CincoDeOro>>> obtenerJugadasCincoDeOroConMayorNumeroDeCoincidencias(@RequestParam(defaultValue = "2") int numeroDeCoincidencias) {
     try {

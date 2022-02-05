@@ -146,6 +146,17 @@ public class CincoDeOroService implements ICincoDeOroService {
 	}
 
 	@Override
+	public List<CincoDeOro> obtenerUltimasJugadas(int page, int size) throws InterruptedException {
+		List<CincoDeOro> ultimasJugadas = cincoDeOroDAO.obtenerUltimasJugadas(page, size);
+		return ultimasJugadas;
+	}
+
+	public CincoDeOro obtenerJugadaAnterior(CincoDeOro cincoDeOro){
+		CincoDeOro cincoDeOroJugadaAlterior = cincoDeOroDAO.obtenerJugadaAnteriorCincoDeOro(cincoDeOro);
+		return cincoDeOroJugadaAlterior;
+	}
+
+	@Override
 	public HashMap<Integer, List<CincoDeOro>> obtenerJugadasCincoDeOroConMayorNumeroDeCoincidencias(int coincidencias) throws InterruptedException {
 		CincoDeOro ultimaJugada = obtenerUltimaJugada();
 		HashMap<Integer, List<CincoDeOro>> jugadasConMayorNumeroDeCoincidencias = new HashMap<>();
@@ -191,4 +202,5 @@ public class CincoDeOroService implements ICincoDeOroService {
 		String [] numeros = fecha.split(" ");
 		return numeros[1] + "/" + Meses.mesesDelAño.get(numeros[3].toLowerCase()) + "/" + numeros[5];
 	}
+
 }

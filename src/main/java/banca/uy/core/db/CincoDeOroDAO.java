@@ -32,6 +32,25 @@ public class CincoDeOroDAO {
 		return cincoDeOro;
 	}
 
+	public List<CincoDeOro> obtenerUltimasJugadas(int page, int size) {
+		Query query = new Query();
+		query.with(Sort.by(Sort.Direction.DESC, "fechaTirada"));
+		query.limit(size);
+		query.skip((page - 1) * size);
+		List<CincoDeOro> ultimasJugadas = mongoOperations.find(query, CincoDeOro.class);
+		return ultimasJugadas;
+	}
+
+	public CincoDeOro obtenerJugadaAnteriorCincoDeOro(CincoDeOro cincoDeOro) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("fechaTirada").lt(cincoDeOro.getFechaTirada()));
+		query.with(Sort.by(Sort.Direction.DESC, "fechaTirada"));
+		query.limit(2);
+		List<CincoDeOro> cincoDeOroJugadas = mongoOperations.find(query, CincoDeOro.class);
+		CincoDeOro jugadaAnteriorCincoDeOro = cincoDeOroJugadas.size() > 1 ? cincoDeOroJugadas.get(0) : new CincoDeOro();
+		return jugadaAnteriorCincoDeOro;
+	}
+
 	public List<CincoDeOro> obtenerJugadasCincoDeOroConCoincidencias(CincoDeOro cincoDeOro) {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("sid").ne(cincoDeOro.getSId()).andOperator(Criteria.where("cincoDeOro").in(cincoDeOro.getCincoDeOro().subList(1, 2)), Criteria.where("eliminado").is(false)));

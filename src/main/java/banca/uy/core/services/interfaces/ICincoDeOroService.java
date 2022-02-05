@@ -13,5 +13,7 @@ public interface ICincoDeOroService {
 
     CincoDeOro obtenerUltimaJugada() throws InterruptedException;
 
+    List<CincoDeOro> obtenerUltimasJugadas(int page, int size) throws InterruptedException;
+
     HashMap<Integer, List<CincoDeOro>> obtenerJugadasCincoDeOroConMayorNumeroDeCoincidencias(int coincidencias) throws InterruptedException;
 }
