@@ -5,6 +5,7 @@ import banca.uy.core.repository.ICincoDeOroRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
@@ -29,6 +30,14 @@ public class CincoDeOroDAO {
 		List<CincoDeOro> cincoDeOroList = mongoOperations.find(query, CincoDeOro.class);
 		CincoDeOro cincoDeOro = cincoDeOroList.size() > 1 ? cincoDeOroList.get(0) : new CincoDeOro();
 		return cincoDeOro;
+	}
+
+	public List<CincoDeOro> obtenerJugadasCincoDeOroConCoincidencias(CincoDeOro cincoDeOro) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("sid").ne(cincoDeOro.getSId()).andOperator(Criteria.where("cincoDeOro").in(cincoDeOro.getCincoDeOro().subList(1, 2)), Criteria.where("eliminado").is(false)));
+		query.with(Sort.by(Sort.Direction.DESC, "fechaTirada"));
+		List<CincoDeOro>jugadasCincoDeOroConCoincidencias = mongoOperations.find(query, CincoDeOro.class);
+		return jugadasCincoDeOroConCoincidencias;
 	}
 
 	public CincoDeOro save(CincoDeOro cincoDeOro){

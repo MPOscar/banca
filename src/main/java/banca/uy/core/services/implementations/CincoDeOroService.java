@@ -145,6 +145,36 @@ public class CincoDeOroService implements ICincoDeOroService {
 		return cincoDeOro;
 	}
 
+	@Override
+	public HashMap<Integer, List<CincoDeOro>> obtenerJugadasCincoDeOroConMayorNumeroDeCoincidencias(int coincidencias) throws InterruptedException {
+		CincoDeOro ultimaJugada = obtenerUltimaJugada();
+		HashMap<Integer, List<CincoDeOro>> jugadasConMayorNumeroDeCoincidencias = new HashMap<>();
+		List<CincoDeOro> jugadasCincoDeOroConCoincidencias = cincoDeOroDAO.obtenerJugadasCincoDeOroConCoincidencias(ultimaJugada);
+		for (CincoDeOro cincoDeOro: jugadasCincoDeOroConCoincidencias) {
+			int numeroDeCoincidencias = buscarNumeroDeCoincidencias(ultimaJugada, cincoDeOro);
+			if (numeroDeCoincidencias >= coincidencias) {
+				if (jugadasConMayorNumeroDeCoincidencias.get(numeroDeCoincidencias) != null) {
+					jugadasConMayorNumeroDeCoincidencias.get(numeroDeCoincidencias).add(cincoDeOro);
+				} else {
+					List<CincoDeOro> jugadasConCoincidencias = new ArrayList<>();
+					jugadasConCoincidencias.add(cincoDeOro);
+					jugadasConMayorNumeroDeCoincidencias.put(numeroDeCoincidencias, jugadasConCoincidencias);
+				}
+			}
+		}
+		return jugadasConMayorNumeroDeCoincidencias;
+	}
+
+	public int buscarNumeroDeCoincidencias(CincoDeOro ultimaJugada, CincoDeOro cincoDeOro){
+		int numeroDeCoincidencias = 0;
+		for (Integer numero: cincoDeOro.getCincoDeOro()) {
+			if(ultimaJugada.getCincoDeOro().indexOf(numero) > -1){
+				numeroDeCoincidencias ++;
+			}
+		}
+		return numeroDeCoincidencias;
+	}
+
 	public void actualizarHastaFechaSeleccionada(DateTime fechaParada) throws InterruptedException {
 		Calendar calendar = Calendar.getInstance();
 		while(new DateTime(calendar).isAfter(fechaParada)){

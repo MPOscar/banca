@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.ws.rs.WebApplicationException;
 
+import java.util.HashMap;
+import java.util.List;
+
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
@@ -61,6 +64,18 @@ public class CincoDeOroController {
     try {
       CincoDeOro cincoDeOro = cincoDeOroService.obtenerUltimaJugada();
       return new Representacion<>(HttpStatus.OK.value(), cincoDeOro);
+    } catch (Exception ex) {
+      logger.log(Level.ERROR, "precios controller @PostMapping(\"/excel/actualizar\") Error:", ex.getMessage(), ex.getStackTrace());
+      throw new WebApplicationException("Ocurrió un error al actualizar los productos - " + ex.getMessage(),
+              HttpStatus.INTERNAL_SERVER_ERROR.value());
+    }
+  }
+
+  @GetMapping("/obtenerJugadasCincoDeOroConMayorNumeroDeCoincidencias")
+  public Representacion<HashMap<Integer, List<CincoDeOro>>> obtenerJugadasCincoDeOroConMayorNumeroDeCoincidencias(@RequestParam(defaultValue = "2") int numeroDeCoincidencias) {
+    try {
+      HashMap<Integer, List<CincoDeOro>> jugadasCincoDeOroConMayorNumeroDeCoincidencias = cincoDeOroService.obtenerJugadasCincoDeOroConMayorNumeroDeCoincidencias(numeroDeCoincidencias);
+      return new Representacion<>(HttpStatus.OK.value(), jugadasCincoDeOroConMayorNumeroDeCoincidencias);
     } catch (Exception ex) {
       logger.log(Level.ERROR, "precios controller @PostMapping(\"/excel/actualizar\") Error:", ex.getMessage(), ex.getStackTrace());
       throw new WebApplicationException("Ocurrió un error al actualizar los productos - " + ex.getMessage(),
