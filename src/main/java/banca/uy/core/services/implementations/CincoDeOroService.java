@@ -188,10 +188,10 @@ public class CincoDeOroService implements ICincoDeOroService {
 		return jugadasConMayorNumeroDeCoincidencias;
 	}
 
-	public int buscarNumeroDeCoincidencias(CincoDeOro ultimaJugada, CincoDeOro cincoDeOro){
+	public int buscarNumeroDeCoincidencias(CincoDeOro ultimaJugada, CincoDeOro cincoDeOro) {
 		int numeroDeCoincidencias = 0;
 		for (Integer numero: cincoDeOro.getCincoDeOro()) {
-			if(ultimaJugada.getCincoDeOro().indexOf(numero) > -1){
+			if (ultimaJugada.getCincoDeOro().indexOf(numero) > -1) {
 				numeroDeCoincidencias ++;
 			}
 		}

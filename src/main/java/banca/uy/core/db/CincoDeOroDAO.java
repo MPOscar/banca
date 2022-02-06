@@ -73,7 +73,7 @@ public class CincoDeOroDAO {
 
 	public List<CincoDeOro> obtenerJugadasCincoDeOroConCoincidencias(CincoDeOro cincoDeOro) {
 		Query query = new Query();
-		query.addCriteria(Criteria.where("sid").ne(cincoDeOro.getSId()).andOperator(Criteria.where("cincoDeOro").in(cincoDeOro.getCincoDeOro().subList(1, 2)), Criteria.where("eliminado").is(false)));
+		query.addCriteria(Criteria.where("sid").ne(cincoDeOro.getSId()).andOperator(Criteria.where("cincoDeOro").in(cincoDeOro.getCincoDeOro()), Criteria.where("eliminado").is(false)));
 		query.with(Sort.by(Sort.Direction.DESC, "fechaTirada"));
 		List<CincoDeOro>jugadasCincoDeOroConCoincidencias = mongoOperations.find(query, CincoDeOro.class);
 		return jugadasCincoDeOroConCoincidencias;
