@@ -157,6 +157,18 @@ public class CincoDeOroService implements ICincoDeOroService {
 	}
 
 	@Override
+	public List<CincoDeOro> obtenerJugadasAnteriores(CincoDeOro cincoDeOro, int page, int size){
+		List<CincoDeOro> jugadasAnteriores = cincoDeOroDAO.obtenerJugadasAnterioresCincoDeOro(cincoDeOro, page, size);
+		return jugadasAnteriores;
+	}
+
+	@Override
+	public List<CincoDeOro> obtenerJugadasPosteriores(CincoDeOro cincoDeOro, int page, int size){
+		List<CincoDeOro> jugadasAnteriores = cincoDeOroDAO.obtenerJugadasPosterioresCincoDeOro(cincoDeOro, page, size);
+		return jugadasAnteriores;
+	}
+
+	@Override
 	public HashMap<Integer, List<CincoDeOro>> obtenerJugadasCincoDeOroConMayorNumeroDeCoincidencias(int coincidencias) throws InterruptedException {
 		CincoDeOro ultimaJugada = obtenerUltimaJugada();
 		HashMap<Integer, List<CincoDeOro>> jugadasConMayorNumeroDeCoincidencias = new HashMap<>();

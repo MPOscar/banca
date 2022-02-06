@@ -71,6 +71,38 @@ public class CincoDeOroController {
     }
   }
 
+  @PostMapping("/obtenerJugadasAnteriores")
+  public Representacion<List<CincoDeOro>> obtenerJugadasAnteriores(
+          @RequestParam(defaultValue = "1") int page,
+          @RequestParam(defaultValue = "4") int size,
+          @RequestBody CincoDeOro cincoDeOro
+  ) {
+    try {
+      List<CincoDeOro> ultimasJugadas = cincoDeOroService.obtenerJugadasAnteriores(cincoDeOro, page, size);
+      return new Representacion<>(HttpStatus.OK.value(), ultimasJugadas);
+    } catch (Exception ex) {
+      logger.log(Level.ERROR, "precios controller @PostMapping(\"/excel/actualizar\") Error:", ex.getMessage(), ex.getStackTrace());
+      throw new WebApplicationException("Ocurrió un error al actualizar los productos - " + ex.getMessage(),
+              HttpStatus.INTERNAL_SERVER_ERROR.value());
+    }
+  }
+
+  @PostMapping("/obtenerJugadasPosteriores")
+  public Representacion<List<CincoDeOro>> obtenerJugadasPosteriores(
+          @RequestParam(defaultValue = "1") int page,
+          @RequestParam(defaultValue = "4") int size,
+          @RequestBody CincoDeOro cincoDeOro
+  ) {
+    try {
+      List<CincoDeOro> ultimasJugadas = cincoDeOroService.obtenerJugadasPosteriores(cincoDeOro, page, size);
+      return new Representacion<>(HttpStatus.OK.value(), ultimasJugadas);
+    } catch (Exception ex) {
+      logger.log(Level.ERROR, "precios controller @PostMapping(\"/excel/actualizar\") Error:", ex.getMessage(), ex.getStackTrace());
+      throw new WebApplicationException("Ocurrió un error al actualizar los productos - " + ex.getMessage(),
+              HttpStatus.INTERNAL_SERVER_ERROR.value());
+    }
+  }
+
   @GetMapping("/obtenerUltimasJugadas")
   public Representacion<List<CincoDeOro>> obtenerUltimasJugadas(
           @RequestParam(defaultValue = "1") int page,
@@ -87,7 +119,7 @@ public class CincoDeOroController {
   }
 
   @GetMapping("/obtenerJugadasCincoDeOroConMayorNumeroDeCoincidencias")
-  public Representacion<HashMap<Integer, List<CincoDeOro>>> obtenerJugadasCincoDeOroConMayorNumeroDeCoincidencias(@RequestParam(defaultValue = "2") int numeroDeCoincidencias) {
+  public Representacion<HashMap<Integer, List<CincoDeOro>>> obtenerJugadasCincoDeOroConMayorNumeroDeCoincidencias(@RequestParam(defaultValue = "1") int numeroDeCoincidencias) {
     try {
       HashMap<Integer, List<CincoDeOro>> jugadasCincoDeOroConMayorNumeroDeCoincidencias = cincoDeOroService.obtenerJugadasCincoDeOroConMayorNumeroDeCoincidencias(numeroDeCoincidencias);
       return new Representacion<>(HttpStatus.OK.value(), jugadasCincoDeOroConMayorNumeroDeCoincidencias);
