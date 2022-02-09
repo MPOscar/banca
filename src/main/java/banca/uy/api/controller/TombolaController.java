@@ -1,5 +1,7 @@
 package banca.uy.api.controller;
 
+import banca.uy.core.entity.Tombola;
+import banca.uy.core.resources.dto.Representacion;
 import banca.uy.core.security.IAuthenticationFacade;
 import banca.uy.core.services.interfaces.ITombolaService;
 import org.apache.logging.log4j.Level;
@@ -12,8 +14,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.ws.rs.WebApplicationException;
 
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -56,11 +58,11 @@ public class TombolaController {
     }
   }
 
-  @GetMapping("/jugada")
-  public ResponseEntity getJugada(@RequestParam(defaultValue = "") String fecha) {
+  @GetMapping("/obtenerUltimaJugada")
+  public Representacion<Tombola> obtenerUltimaJugada() {
     try {
-      Set<Integer> jugada = tombolaService.getJugada(fecha);
-      return ok(jugada);
+      Tombola tombola = tombolaService.obtenerUltimaJugada();
+      return new Representacion<>(HttpStatus.OK.value(), tombola);
     } catch (Exception ex) {
       logger.log(Level.ERROR, "precios controller @PostMapping(\"/excel/actualizar\") Error:", ex.getMessage(), ex.getStackTrace());
       throw new WebApplicationException("Ocurrió un error al actualizar los productos - " + ex.getMessage(),
@@ -68,11 +70,15 @@ public class TombolaController {
     }
   }
 
-  @GetMapping("/repetidas")
-  public ResponseEntity getJugadasRepetidas(@RequestParam(defaultValue = "") String fecha) {
+  @PostMapping("/obtenerJugadasAnteriores")
+  public Representacion<List<Tombola>> obtenerJugadasAnteriores(
+          @RequestParam(defaultValue = "1") int page,
+          @RequestParam(defaultValue = "4") int size,
+          @RequestBody Tombola tombola
+  ) {
     try {
-      List<String> jugada = tombolaService.getJugadaRepetidas(fecha);
-      return ok(jugada);
+      List<Tombola> ultimasJugadas = tombolaService.obtenerJugadasAnteriores(tombola, page, size);
+      return new Representacion<>(HttpStatus.OK.value(), ultimasJugadas);
     } catch (Exception ex) {
       logger.log(Level.ERROR, "precios controller @PostMapping(\"/excel/actualizar\") Error:", ex.getMessage(), ex.getStackTrace());
       throw new WebApplicationException("Ocurrió un error al actualizar los productos - " + ex.getMessage(),
@@ -80,11 +86,44 @@ public class TombolaController {
     }
   }
 
-  @GetMapping("/ultimasTres")
-  public ResponseEntity getUltimasTres(@RequestParam(defaultValue = "") String fecha) {
+  @PostMapping("/obtenerJugadasPosteriores")
+  public Representacion<List<Tombola>> obtenerJugadasPosteriores(
+          @RequestParam(defaultValue = "1") int page,
+          @RequestParam(defaultValue = "4") int size,
+          @RequestBody Tombola tombola
+  ) {
     try {
-      List<String> jugada = tombolaService.getJugadaRepetidas(fecha);
-      return ok(jugada);
+      List<Tombola> ultimasJugadas = tombolaService.obtenerJugadasPosteriores(tombola, page, size);
+      return new Representacion<>(HttpStatus.OK.value(), ultimasJugadas);
+    } catch (Exception ex) {
+      logger.log(Level.ERROR, "precios controller @PostMapping(\"/excel/actualizar\") Error:", ex.getMessage(), ex.getStackTrace());
+      throw new WebApplicationException("Ocurrió un error al actualizar los productos - " + ex.getMessage(),
+              HttpStatus.INTERNAL_SERVER_ERROR.value());
+    }
+  }
+
+  @GetMapping("/obtenerUltimasJugadas")
+  public Representacion<List<Tombola>> obtenerUltimasJugadas(
+          @RequestParam(defaultValue = "1") int page,
+          @RequestParam(defaultValue = "4") int size
+  ) {
+    try {
+      List<Tombola> ultimasJugadas = tombolaService.obtenerUltimasJugadas(page, size);
+      return new Representacion<>(HttpStatus.OK.value(), ultimasJugadas);
+    } catch (Exception ex) {
+      logger.log(Level.ERROR, "precios controller @PostMapping(\"/excel/actualizar\") Error:", ex.getMessage(), ex.getStackTrace());
+      throw new WebApplicationException("Ocurrió un error al actualizar los productos - " + ex.getMessage(),
+              HttpStatus.INTERNAL_SERVER_ERROR.value());
+    }
+  }
+
+  @GetMapping("/obtenerJugadasCincoDeOroConMayorNumeroDeCoincidencias")
+  public Representacion<HashMap<Integer, List<Tombola>>> obtenerJugadasCincoDeOroConMayorNumeroDeCoincidencias(
+          @RequestParam(defaultValue = "1") int numeroDeCoincidencias
+  ) {
+    try {
+      HashMap<Integer, List<Tombola>> jugadasTombolaConMayorNumeroDeCoincidencias = tombolaService.obtenerJugadasTombolaConMayorNumeroDeCoincidencias(numeroDeCoincidencias);
+      return new Representacion<>(HttpStatus.OK.value(), jugadasTombolaConMayorNumeroDeCoincidencias);
     } catch (Exception ex) {
       logger.log(Level.ERROR, "precios controller @PostMapping(\"/excel/actualizar\") Error:", ex.getMessage(), ex.getStackTrace());
       throw new WebApplicationException("Ocurrió un error al actualizar los productos - " + ex.getMessage(),

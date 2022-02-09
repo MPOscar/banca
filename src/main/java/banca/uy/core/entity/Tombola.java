@@ -15,9 +15,9 @@ import java.util.List;
 @Document(collection = "Tombola")
 public class Tombola extends Entidad {
 
-	private List<Integer> sorteoVespertino = new ArrayList<>();
+	private List<Integer> sorteo = new ArrayList<>();
 
-	private List<Integer> sorteoNocturno = new ArrayList<>();
+	private boolean esDiurno;
 
 	@JsonSerialize(using = CustomDateTimeSerializer.class)
 	@JsonDeserialize(using = CustomDateTimeDeserializer.class)
@@ -31,20 +31,12 @@ public class Tombola extends Entidad {
 		this.fechaTirada = fechaTirada;
 	}
 
-	public List<Integer> getSorteoVespertino() {
-		return sorteoVespertino;
+	public List<Integer> getSorteo() {
+		return sorteo;
 	}
 
-	public void setSorteoVespertino(List<Integer> sorteoVespertino) {
-		this.sorteoVespertino = sorteoVespertino;
-	}
-
-	public List<Integer> getSorteoNocturno() {
-		return sorteoNocturno;
-	}
-
-	public void setSorteoNocturno(List<Integer> sorteoNocturno) {
-		this.sorteoNocturno = sorteoNocturno;
+	public void setSorteo(List<Integer> sorteo) {
+		this.sorteo = sorteo;
 	}
 
 	public DateTime getFechaTirada() {
@@ -53,6 +45,14 @@ public class Tombola extends Entidad {
 
 	public void setFechaTirada(DateTime fechaTirada) {
 		this.fechaTirada = fechaTirada;
+	}
+
+	public boolean getEsDiurno() {
+		return esDiurno;
+	}
+
+	public void setEsDiurno(boolean esDiurno) {
+		this.esDiurno = esDiurno;
 	}
 
 	@Override

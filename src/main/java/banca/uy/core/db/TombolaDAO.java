@@ -1,8 +1,8 @@
 package banca.uy.core.db;
 
+import banca.uy.core.entity.CincoDeOro;
 import banca.uy.core.entity.Tombola;
 import banca.uy.core.repository.ITombolaRepository;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -27,17 +27,45 @@ public class TombolaDAO {
 	public Tombola obtenerUltimaJugadaCompleta() {
 		Query query = new Query();
 		query.with(Sort.by(Sort.Direction.DESC, "fechaTirada"));
-		query.limit(2);
-		List<Tombola> tombolaList = mongoOperations.find(query, Tombola.class);
-		Tombola tombola = tombolaList.size() > 1 ? tombolaList.get(1) : new Tombola();
+		Tombola tombola = mongoOperations.findOne(query, Tombola.class);
 		return tombola;
 	}
 
-
-	public List<Tombola> findAllSortByFechaTirada(DateTime fecha) {
+	public List<Tombola> obtenerJugadasAnterioresCincoDeOro(Tombola tombola, int page, int size) {
 		Query query = new Query();
-		List<Tombola> tombolaList = mongoOperations.find(query.with(Sort.by(Sort.Direction.DESC, "fechaTirada")).addCriteria(Criteria.where("fechaTirada").lte(fecha)).limit(10), Tombola.class);
-		return tombolaList;
+		query.addCriteria(Criteria.where("fechaTirada").lte(tombola.getFechaTirada()));
+		query.with(Sort.by(Sort.Direction.DESC, "fechaTirada"));
+		query.limit(size);
+		query.skip((page - 1) * size);
+		List<Tombola> tombolaJugadasAnteriores = mongoOperations.find(query, Tombola.class);
+		return tombolaJugadasAnteriores;
+	}
+
+	public List<Tombola> obtenerJugadasPosterioresCincoDeOro(Tombola tombola, int page, int size) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("fechaTirada").gt(tombola.getFechaTirada()));
+		query.with(Sort.by(Sort.Direction.ASC, "fechaTirada"));
+		query.limit(size);
+		query.skip((page - 1) * size);
+		List<Tombola> tombolaJugadasAnteriores = mongoOperations.find(query, Tombola.class);
+		return tombolaJugadasAnteriores;
+	}
+
+	public List<Tombola> obtenerUltimasJugadas(int page, int size) {
+		Query query = new Query();
+		query.with(Sort.by(Sort.Direction.DESC, "fechaTirada"));
+		query.limit(size);
+		query.skip((page - 1) * size);
+		List<Tombola> ultimasJugadas = mongoOperations.find(query, Tombola.class);
+		return ultimasJugadas;
+	}
+
+	public List<Tombola> obtenerJugadasTombolaConCoincidencias(Tombola tombola) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("sid").ne(tombola.getSId()).andOperator(Criteria.where("sorteo").in(tombola.getSorteo()), Criteria.where("eliminado").is(false)));
+		query.with(Sort.by(Sort.Direction.DESC, "fechaTirada"));
+		List<Tombola>jugadasTombolaConCoincidencias = mongoOperations.find(query, Tombola.class);
+		return jugadasTombolaConCoincidencias;
 	}
 
 	public Tombola save(Tombola tombola){

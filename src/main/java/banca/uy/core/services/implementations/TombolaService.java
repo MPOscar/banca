@@ -1,5 +1,6 @@
 package banca.uy.core.services.implementations;
 
+import banca.uy.core.entity.CincoDeOro;
 import banca.uy.core.repository.ITombolaRepository;
 import banca.uy.core.services.interfaces.IEnviarPeticionApiDeLaBancaService;
 import banca.uy.core.db.TombolaDAO;
@@ -68,20 +69,17 @@ public class TombolaService implements ITombolaService {
 
 		boolean diurna = tipoTirada.indexOf("Vespertino") > -1 ? true : false;
 
-		DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/YYYY");
-		DateTime fechaTirada = formatter.parseDateTime(fechaTiradaToParse);
+		DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/YYYY HH:mm:ss");
+		DateTime fechaTirada = formatter.parseDateTime(fechaTiradaToParse + (diurna ? " 12:00:00" : " 18:00:00"));
 
 		Tombola tombola = tombolaRepository.findFirstByFechaTirada(fechaTirada);
 		if(tombola == null){
 			tombola = new Tombola(fechaTirada);
 		}
+		tombola.setEsDiurno(diurna);
+		tombola.setSorteo(numerosTiradaSalvar);
 
-		if(diurna){
-			tombola.setSorteoVespertino(numerosTiradaSalvar);
-		} else {
-			tombola.setSorteoNocturno(numerosTiradaSalvar);
-		}
-		 return this.tombolaDAO.save(tombola);
+		return this.tombolaDAO.save(tombola);
 	}
 
 
@@ -106,88 +104,65 @@ public class TombolaService implements ITombolaService {
 			String tiradaVespertina = parametro + "-15:00";
 			String tiradaNocturna = parametro + "-21:00";
 			obtenerTiradaYGuardarEnBaseDeDatos(tiradaVespertina);
-			TimeUnit.SECONDS.sleep(1);
+			TimeUnit.MILLISECONDS.sleep(200);
 			obtenerTiradaYGuardarEnBaseDeDatos(tiradaNocturna);
-			TimeUnit.SECONDS.sleep(1);
+			TimeUnit.MILLISECONDS.sleep(200);
 			calendar.add(Calendar.DAY_OF_MONTH, -1);
 		}
 	}
 
-	public Set<Integer> getJugada(String fecha){
-		DateTime fechaTirada = new DateTime();
-		if(!fecha.equals("")) {
-			fechaTirada = formatter.parseDateTime(fecha);
-		}
-		Set<Integer> jugada = new HashSet<>();
-		List<Tombola> ultimosSorteos = tombolaDAO.findAllSortByFechaTirada(fechaTirada);
-		List<Integer> numerosFinal = new ArrayList<>();
-		List<Integer> numerosPosiblesNoSalen = new ArrayList<>();
-		for (Tombola tombola: ultimosSorteos) {
-			for (Integer numero: tombola.getSorteoNocturno()) {
-				if(numerosFinal.size() < 40){
-					numerosFinal.add(numero);
-				}else{
-					break;
-				}
-			}
-
-			for (Integer numero: tombola.getSorteoVespertino()) {
-				if(numerosFinal.size() < 40){
-					numerosFinal.add(numero);
-				}else{
-					break;
-				}
-			}
-
-			if(numerosFinal.size() == 40){
-				break;
-			}
-		}
-		for (Integer numero: numerosFinal) {
-			numerosPosiblesNoSalen.add(numero);
-			numerosPosiblesNoSalen.add(101 - numero);
-		}
-		for (int i = 0; i < 100; i ++) {
-			if(!numerosPosiblesNoSalen.contains(i)){
-				jugada.add(i);
-			}
-		}
-		return jugada;
+	@Override
+	public Tombola obtenerUltimaJugada() throws InterruptedException {
+		Tombola tombola = tombolaDAO.obtenerUltimaJugadaCompleta();
+		return tombola;
 	}
 
-	public List<String> getJugadaRepetidas(String fecha){
-		DateTime fechaTirada = new DateTime();
-		if(!fecha.equals("")) {
-			fechaTirada = formatter.parseDateTime(fecha);
-		}
-		List<Tombola> ultimosSorteos = tombolaDAO.findAllSortByFechaTirada(fechaTirada);
-		HashMap<String, Integer> cantidadDeVecesRepetido = new HashMap<>();
-		for (Tombola tombola: ultimosSorteos) {
-			for (Integer numero : tombola.getSorteoNocturno()) {
-				if (cantidadDeVecesRepetido.containsKey(numero.toString())) {
-					cantidadDeVecesRepetido.put(numero.toString(), (cantidadDeVecesRepetido.get(numero.toString()) + 1));
-				} else {
-					cantidadDeVecesRepetido.put(numero.toString(), 1);
-				}
-			}
+	@Override
+	public List<Tombola> obtenerJugadasAnteriores(Tombola tombola, int page, int size){
+		List<Tombola> jugadasAnteriores = tombolaDAO.obtenerJugadasAnterioresCincoDeOro(tombola, page, size);
+		return jugadasAnteriores;
+	}
 
-			for (Integer numero : tombola.getSorteoVespertino()) {
-				if (cantidadDeVecesRepetido.containsKey(numero.toString())) {
-					cantidadDeVecesRepetido.put(numero.toString(), (cantidadDeVecesRepetido.get(numero.toString()) + 1));
+	@Override
+	public List<Tombola> obtenerJugadasPosteriores(Tombola tombola, int page, int size){
+		List<Tombola> jugadasAnteriores = tombolaDAO.obtenerJugadasPosterioresCincoDeOro(tombola, page, size);
+		return jugadasAnteriores;
+	}
+
+	@Override
+	public List<Tombola> obtenerUltimasJugadas(int page, int size) throws InterruptedException {
+		List<Tombola> ultimasJugadas = tombolaDAO.obtenerUltimasJugadas(page, size);
+		return ultimasJugadas;
+	}
+
+	@Override
+	public HashMap<Integer, List<Tombola>> obtenerJugadasTombolaConMayorNumeroDeCoincidencias(int coincidencias) throws InterruptedException {
+		Tombola ultimaJugada = obtenerUltimaJugada();
+		HashMap<Integer, List<Tombola>> jugadasConMayorNumeroDeCoincidencias = new HashMap<>();
+		List<Tombola> jugadasTombolaConCoincidencias = tombolaDAO.obtenerJugadasTombolaConCoincidencias(ultimaJugada);
+		for (Tombola tombola: jugadasTombolaConCoincidencias) {
+			int numeroDeCoincidencias = buscarNumeroDeCoincidencias(ultimaJugada, tombola);
+			if (numeroDeCoincidencias >= coincidencias) {
+				if (jugadasConMayorNumeroDeCoincidencias.get(numeroDeCoincidencias) != null) {
+					jugadasConMayorNumeroDeCoincidencias.get(numeroDeCoincidencias).add(tombola);
 				} else {
-					cantidadDeVecesRepetido.put(numero.toString(), 1);
+					List<Tombola> jugadasConCoincidencias = new ArrayList<>();
+					jugadasConCoincidencias.add(tombola);
+					jugadasConMayorNumeroDeCoincidencias.put(numeroDeCoincidencias, jugadasConCoincidencias);
 				}
 			}
 		}
-		List<String> cantidadDeVecesRepetidosOrdenados = new ArrayList<>();
-		for(int i = 0; i < 100; i++){
-			if(cantidadDeVecesRepetido.containsKey(Integer.toString(i))){
-				cantidadDeVecesRepetidosOrdenados.add(i, (Integer.toString(i) + " ---> "  +cantidadDeVecesRepetido.get(Integer.toString(i))));
-			}else{
-				cantidadDeVecesRepetidosOrdenados.add(i, Integer.toString(i) + " ---> 0");
+		return jugadasConMayorNumeroDeCoincidencias;
+	}
+
+	public int buscarNumeroDeCoincidencias(Tombola ultimaJugada, Tombola tombola) {
+		int numeroDeCoincidencias = 0;
+		for (Integer numero: tombola.getSorteo()) {
+			if (ultimaJugada.getSId().indexOf(numero) > -1) {
+				numeroDeCoincidencias ++;
 			}
 		}
-		return cantidadDeVecesRepetidosOrdenados;
+		return numeroDeCoincidencias;
 	}
 
 	public String formatearFecha(String fecha){
