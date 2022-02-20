@@ -158,7 +158,7 @@ public class TombolaService implements ITombolaService {
 	public int buscarNumeroDeCoincidencias(Tombola ultimaJugada, Tombola tombola) {
 		int numeroDeCoincidencias = 0;
 		for (Integer numero: tombola.getSorteo()) {
-			if (ultimaJugada.getSId().indexOf(numero) > -1) {
+			if (ultimaJugada.getSorteo().indexOf(numero) > -1) {
 				numeroDeCoincidencias ++;
 			}
 		}

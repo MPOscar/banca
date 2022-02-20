@@ -117,7 +117,7 @@ public class TombolaController {
     }
   }
 
-  @GetMapping("/obtenerJugadasCincoDeOroConMayorNumeroDeCoincidencias")
+  @GetMapping("/obtenerJugadasTombolaConMayorNumeroDeCoincidencias")
   public Representacion<HashMap<Integer, List<Tombola>>> obtenerJugadasCincoDeOroConMayorNumeroDeCoincidencias(
           @RequestParam(defaultValue = "1") int numeroDeCoincidencias
   ) {
