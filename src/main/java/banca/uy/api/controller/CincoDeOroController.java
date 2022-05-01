@@ -1,7 +1,6 @@
 package banca.uy.api.controller;
 
 import banca.uy.core.entity.CincoDeOro;
-import banca.uy.core.resources.dto.LoginResponse;
 import banca.uy.core.resources.dto.Representacion;
 import banca.uy.core.security.IAuthenticationFacade;
 import banca.uy.core.services.interfaces.ICincoDeOroService;
@@ -119,7 +118,9 @@ public class CincoDeOroController {
   }
 
   @GetMapping("/obtenerJugadasCincoDeOroConMayorNumeroDeCoincidencias")
-  public Representacion<HashMap<Integer, List<CincoDeOro>>> obtenerJugadasCincoDeOroConMayorNumeroDeCoincidencias(@RequestParam(defaultValue = "1") int numeroDeCoincidencias) {
+  public Representacion<HashMap<Integer, List<CincoDeOro>>> obtenerJugadasCincoDeOroConMayorNumeroDeCoincidencias(
+          @RequestParam(defaultValue = "1") int numeroDeCoincidencias
+  ) {
     try {
       HashMap<Integer, List<CincoDeOro>> jugadasCincoDeOroConMayorNumeroDeCoincidencias = cincoDeOroService.obtenerJugadasCincoDeOroConMayorNumeroDeCoincidencias(numeroDeCoincidencias);
       return new Representacion<>(HttpStatus.OK.value(), jugadasCincoDeOroConMayorNumeroDeCoincidencias);
@@ -128,7 +129,34 @@ public class CincoDeOroController {
       throw new WebApplicationException("Ocurrió un error al actualizar los productos - " + ex.getMessage(),
               HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
+  }
 
+  @GetMapping("/jugadasCincoDeOroNumeroDeCoincidencias")
+  public Representacion<HashMap<Integer, List<CincoDeOro>>> jugadasCincoDeOroNumeroDeCoincidencias(
+          @RequestParam(defaultValue = "1") int numeroDeCoincidencias,
+          @RequestBody CincoDeOro cincoDeOro
+  ) {
+    try {
+      HashMap<Integer, List<CincoDeOro>> jugadasCincoDeOroNumeroDeCoincidencias = cincoDeOroService.obtenerJugadasCincoDeOroNumeroDeCoincidencias(numeroDeCoincidencias, cincoDeOro);
+      return new Representacion<>(HttpStatus.OK.value(), jugadasCincoDeOroNumeroDeCoincidencias);
+    } catch (Exception ex) {
+      logger.log(Level.ERROR, "precios controller @PostMapping(\"/excel/actualizar\") Error:", ex.getMessage(), ex.getStackTrace());
+      throw new WebApplicationException("Ocurrió un error al actualizar los productos - " + ex.getMessage(),
+              HttpStatus.INTERNAL_SERVER_ERROR.value());
+    }
+  }
+
+  @GetMapping("/obtenerTodasLasCombinaciones")
+  public Representacion<List<List<Integer>>> obtenerTodasLasCombinaciones(
+  ) {
+    try {
+      List<List<Integer>> permutaciones = cincoDeOroService.obtenerTodasLasCombinaciones();
+      return new Representacion<>(HttpStatus.OK.value(), permutaciones);
+    } catch (Exception ex) {
+      logger.log(Level.ERROR, "precios controller @PostMapping(\"/excel/actualizar\") Error:", ex.getMessage(), ex.getStackTrace());
+      throw new WebApplicationException("Ocurrió un error al actualizar los productos - " + ex.getMessage(),
+              HttpStatus.INTERNAL_SERVER_ERROR.value());
+    }
   }
 
 }

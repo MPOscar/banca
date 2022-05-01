@@ -1,5 +1,7 @@
 package banca.uy.core.services.implementations;
 
+import banca.uy.core.db.CincoDeOroCombinacionDAO;
+import banca.uy.core.entity.CincoDeOroCombinacion;
 import banca.uy.core.repository.ICincoDeOroRepository;
 import banca.uy.core.services.interfaces.IEnviarPeticionApiDeLaBancaService;
 import banca.uy.core.db.CincoDeOroDAO;
@@ -27,6 +29,9 @@ public class CincoDeOroService implements ICincoDeOroService {
 
 	@Autowired
 	private CincoDeOroDAO cincoDeOroDAO;
+
+	@Autowired
+	CincoDeOroCombinacionDAO cincoDeOroCombinacionDAO;
 
 	private static final String ulrCincoDeOro = "/resultados/cincodeoro/renderizar_info_sorteo";
 
@@ -188,6 +193,28 @@ public class CincoDeOroService implements ICincoDeOroService {
 		return jugadasConMayorNumeroDeCoincidencias;
 	}
 
+	@Override
+	public HashMap<Integer, List<CincoDeOro>> obtenerJugadasCincoDeOroNumeroDeCoincidencias(
+			int coincidencias,
+			CincoDeOro ultimaJugada
+	) throws InterruptedException {
+		HashMap<Integer, List<CincoDeOro>> jugadasConMayorNumeroDeCoincidencias = new HashMap<>();
+		List<CincoDeOro> jugadasCincoDeOroConCoincidencias = cincoDeOroDAO.obtenerJugadasCincoDeOroConCoincidencias(ultimaJugada);
+		for (CincoDeOro cincoDeOro: jugadasCincoDeOroConCoincidencias) {
+			int numeroDeCoincidencias = buscarNumeroDeCoincidencias(ultimaJugada, cincoDeOro);
+			if (numeroDeCoincidencias >= coincidencias) {
+				if (jugadasConMayorNumeroDeCoincidencias.get(numeroDeCoincidencias) != null) {
+					jugadasConMayorNumeroDeCoincidencias.get(numeroDeCoincidencias).add(cincoDeOro);
+				} else {
+					List<CincoDeOro> jugadasConCoincidencias = new ArrayList<>();
+					jugadasConCoincidencias.add(cincoDeOro);
+					jugadasConMayorNumeroDeCoincidencias.put(numeroDeCoincidencias, jugadasConCoincidencias);
+				}
+			}
+		}
+		return jugadasConMayorNumeroDeCoincidencias;
+	}
+
 	public int buscarNumeroDeCoincidencias(CincoDeOro ultimaJugada, CincoDeOro cincoDeOro) {
 		int numeroDeCoincidencias = 0;
 		for (Integer numero: cincoDeOro.getCincoDeOro()) {
@@ -200,7 +227,7 @@ public class CincoDeOroService implements ICincoDeOroService {
 
 	public void actualizarHastaFechaSeleccionada(DateTime fechaParada) throws InterruptedException {
 		Calendar calendar = Calendar.getInstance();
-		while(new DateTime(calendar).isAfter(fechaParada)){
+		while(new DateTime(calendar).isAfter(fechaParada)) {
 			DateTime fehaTirada = new DateTime(calendar);
 			String parametro = formatter.print(fehaTirada);
 			String tirada = parametro + "-22:00";
@@ -213,6 +240,37 @@ public class CincoDeOroService implements ICincoDeOroService {
 	public String formatearFecha(String fecha){
 		String [] numeros = fecha.split(" ");
 		return numeros[1] + "/" + Meses.mesesDelAño.get(numeros[3].toLowerCase()) + "/" + numeros[5];
+	}
+
+	@Override
+	public List<List<Integer>> obtenerTodasLasCombinaciones() {
+		List<List<Integer>> permutaciones = new ArrayList<>();
+		int numero = 48;
+		for (int a = 1; a <= numero; a++) {
+			for (int b = a + 1; b <= numero; b++) {
+				for (int c = b + 1; c <= numero; c++) {
+					for (int d = c + 1; d <= numero; d++) {
+						for (int e = d + 1; e <= numero; e++) {
+							List<Integer> permutacion = new ArrayList<>();
+							permutacion.add(a);
+							permutacion.add(b);
+							permutacion.add(c);
+							permutacion.add(d);
+							permutacion.add(e);
+							permutaciones.add(permutacion);
+							CincoDeOro cincoDeOro = cincoDeOroDAO.obtenerJugadaConCoincidencia(permutacion);
+							boolean fueSorteda = false;
+							if (cincoDeOro != null) {
+								fueSorteda = true;
+							}
+							CincoDeOroCombinacion cincoDeOroCombinacion = new CincoDeOroCombinacion(permutacion, fueSorteda);
+							cincoDeOroCombinacionDAO.save(cincoDeOroCombinacion);
+						}
+					}
+				}
+			}
+		}
+		return permutaciones;
 	}
 
 }

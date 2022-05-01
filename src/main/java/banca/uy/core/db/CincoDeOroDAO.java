@@ -79,6 +79,13 @@ public class CincoDeOroDAO {
 		return jugadasCincoDeOroConCoincidencias;
 	}
 
+	public CincoDeOro obtenerJugadaConCoincidencia(List<Integer> jugada) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("cincoDeOro").all(jugada));
+		CincoDeOro cincoDeOro = mongoOperations.findOne(query, CincoDeOro.class);
+		return cincoDeOro;
+	}
+
 	public CincoDeOro save(CincoDeOro cincoDeOro){
 		cincoDeOro = cincoDeOroRepository.save(cincoDeOro);
 		if(cincoDeOro.getSId() == null){

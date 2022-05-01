@@ -5,6 +5,8 @@ import banca.uy.core.utils.serializer.CustomDateTimeSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.joda.time.DateTime;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.index.IndexDirection;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -13,6 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Document(collection = "CincoDeOro")
+@CompoundIndexes({
+		@CompoundIndex(name = "fechaTirada", def = "{ 'fechaTirada': 1 }", unique = true)
+})
 public class CincoDeOro extends Entidad {
 
 	private List<Integer> cincoDeOro = new ArrayList<>();

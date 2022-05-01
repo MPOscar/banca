@@ -11,6 +11,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -70,7 +71,7 @@ public class TombolaService implements ITombolaService {
 		boolean diurna = tipoTirada.indexOf("Vespertino") > -1 ? true : false;
 
 		DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/YYYY HH:mm:ss");
-		DateTime fechaTirada = formatter.parseDateTime(fechaTiradaToParse + (diurna ? " 12:00:00" : " 18:00:00"));
+		DateTime fechaTirada = formatter.parseDateTime(fechaTiradaToParse + (diurna ? " 15:00:00" : " 21:00:00"));
 
 		Tombola tombola = tombolaRepository.findFirstByFechaTirada(fechaTirada);
 		if(tombola == null){
@@ -90,9 +91,10 @@ public class TombolaService implements ITombolaService {
 	}
 
 	@Override
+	@Scheduled(cron = "${cronExpressionActualizarBaseDeDatos}")
 	public void actualizarBaseDeDatos() throws InterruptedException {
 		Tombola tombola = tombolaDAO.obtenerUltimaJugadaCompleta();
-		DateTime fechaParada = tombola.getFechaTirada();
+		DateTime fechaParada = tombola != null ? tombola.getFechaTirada(): new DateTime();
 		actualizarHastaFechaSeleccionada(fechaParada);
 	}
 
