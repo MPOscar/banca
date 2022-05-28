@@ -6,11 +6,16 @@ import banca.uy.core.repository.ITombolaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
+
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.group;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.match;
 
 @Component
 public class TombolaDAO {
@@ -60,6 +65,25 @@ public class TombolaDAO {
 		return ultimasJugadas;
 	}
 
+	public List<Tombola> obtenerTodasLasJugadas() {
+		Aggregation tombolaAggregation = Aggregation.newAggregation(
+				match(Criteria.where("eliminado").is(false)),
+				Aggregation.sort(Sort.Direction.ASC, "fechaTirada")
+				);
+		List<Tombola> jugadas = mongoOperations.aggregate(tombolaAggregation, "Tombola", Tombola.class).getMappedResults();
+		return jugadas;
+	}
+
+	public List<Tombola> obtenerJugadasAnteriones(Tombola tombola, int cantidadDeJugadas) {
+		Aggregation tombolaAggregation = Aggregation.newAggregation(
+				match(Criteria.where("eliminado").is(false).andOperator(Criteria.where("fechaTirada").lt(tombola.getFechaTirada()))),
+				Aggregation.sort(Sort.Direction.DESC, "fechaTirada"),
+				Aggregation.limit((long) cantidadDeJugadas)
+		);
+		List<Tombola> jugadas = mongoOperations.aggregate(tombolaAggregation, "Tombola", Tombola.class).getMappedResults();
+		return jugadas;
+	}
+
 	public List<Tombola> obtenerJugadasTombolaConCoincidencias(Tombola tombola) {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("sid").ne(tombola.getSId()).andOperator(Criteria.where("sorteo").in(tombola.getSorteo()), Criteria.where("eliminado").is(false)));
@@ -75,7 +99,10 @@ public class TombolaDAO {
 			tombola = tombolaRepository.save(tombola);
 		}
 		return tombola;
+	}
 
+	public Optional<Tombola> findById(String tombolaId) {
+		return tombolaRepository.findById(tombolaId);
 	}
 
 }

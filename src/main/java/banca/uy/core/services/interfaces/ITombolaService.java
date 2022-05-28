@@ -1,5 +1,6 @@
 package banca.uy.core.services.interfaces;
 
+import banca.uy.core.dto.EstadisticaTombola;
 import banca.uy.core.entity.Tombola;
 
 import java.util.HashMap;
@@ -22,4 +23,22 @@ public interface ITombolaService {
 	List<Tombola> obtenerUltimasJugadas(int page, int size) throws InterruptedException;
 
 	HashMap<Integer, List<Tombola>> obtenerJugadasTombolaConMayorNumeroDeCoincidencias(int coincidencias) throws InterruptedException;
+
+	HashMap<String, Integer> estadisticas() throws InterruptedException;
+
+	List<EstadisticaTombola> estadisticasJugadas() throws InterruptedException;
+
+	List<EstadisticaTombola> estadisticasJugadasMayorNumeroCoincidencias() throws InterruptedException;
+
+    List<EstadisticaTombola> estadisticasJugadasMayorNumeroCoincidenciasRepetidas() throws InterruptedException;
+
+	List<List<Integer>> obtenerTodasLasCombinacionesDeTresTombola();
+
+	List<List<Integer>> obtenerTodasLasCombinacionesDeCuatroTombola();
+
+	List<List<Integer>> obtenerTodasLasCombinacionesDeCincoTombola();
+
+	List<List<Integer>> obtenerTodasLasCombinacionesDeSeisTombola();
+
+	List<List<Integer>> obtenerTodasLasCombinacionesDeSieteTombola();
 }

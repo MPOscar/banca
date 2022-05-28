@@ -1,5 +1,6 @@
 package banca.uy.api.controller;
 
+import banca.uy.core.dto.EstadisticaTombola;
 import banca.uy.core.entity.Tombola;
 import banca.uy.core.resources.dto.Representacion;
 import banca.uy.core.security.IAuthenticationFacade;
@@ -124,6 +125,30 @@ public class TombolaController {
     try {
       HashMap<Integer, List<Tombola>> jugadasTombolaConMayorNumeroDeCoincidencias = tombolaService.obtenerJugadasTombolaConMayorNumeroDeCoincidencias(numeroDeCoincidencias);
       return new Representacion<>(HttpStatus.OK.value(), jugadasTombolaConMayorNumeroDeCoincidencias);
+    } catch (Exception ex) {
+      logger.log(Level.ERROR, "precios controller @PostMapping(\"/excel/actualizar\") Error:", ex.getMessage(), ex.getStackTrace());
+      throw new WebApplicationException("Ocurrió un error al actualizar los productos - " + ex.getMessage(),
+              HttpStatus.INTERNAL_SERVER_ERROR.value());
+    }
+  }
+
+  @GetMapping("/estadisticas")
+  public Representacion estadisticas() {
+    try {
+      HashMap<String, Integer> estadisticas = tombolaService.estadisticas();
+      return new Representacion<>(HttpStatus.OK.value(), estadisticas);
+    } catch (Exception ex) {
+      logger.log(Level.ERROR, "precios controller @PostMapping(\"/excel/actualizar\") Error:", ex.getMessage(), ex.getStackTrace());
+      throw new WebApplicationException("Ocurrió un error al actualizar los productos - " + ex.getMessage(),
+              HttpStatus.INTERNAL_SERVER_ERROR.value());
+    }
+  }
+
+  @GetMapping("/estadisticasJugadasRepetidas")
+  public Representacion estadisticasJugadasRepetidas() {
+    try {
+      List<EstadisticaTombola> estadisticas = tombolaService.estadisticasJugadasMayorNumeroCoincidenciasRepetidas();
+      return new Representacion<>(HttpStatus.OK.value(), estadisticas);
     } catch (Exception ex) {
       logger.log(Level.ERROR, "precios controller @PostMapping(\"/excel/actualizar\") Error:", ex.getMessage(), ex.getStackTrace());
       throw new WebApplicationException("Ocurrió un error al actualizar los productos - " + ex.getMessage(),
