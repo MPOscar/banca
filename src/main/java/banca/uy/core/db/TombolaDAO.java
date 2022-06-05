@@ -2,7 +2,9 @@ package banca.uy.core.db;
 
 import banca.uy.core.entity.CincoDeOro;
 import banca.uy.core.entity.Tombola;
+import banca.uy.core.entity.TombolaCombinacionesDeTres;
 import banca.uy.core.repository.ITombolaRepository;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -56,11 +58,11 @@ public class TombolaDAO {
 		return tombolaJugadasAnteriores;
 	}
 
-	public List<Tombola> obtenerUltimasJugadas(int page, int size) {
+	public List<Tombola> obtenerUltimasJugadas(int page, int limit) {
 		Query query = new Query();
 		query.with(Sort.by(Sort.Direction.DESC, "fechaTirada"));
-		query.limit(size);
-		query.skip((page - 1) * size);
+		query.limit(limit);
+		query.skip((page - 1) * limit);
 		List<Tombola> ultimasJugadas = mongoOperations.find(query, Tombola.class);
 		return ultimasJugadas;
 	}
@@ -70,6 +72,15 @@ public class TombolaDAO {
 				match(Criteria.where("eliminado").is(false)),
 				Aggregation.sort(Sort.Direction.ASC, "fechaTirada")
 				);
+		List<Tombola> jugadas = mongoOperations.aggregate(tombolaAggregation, "Tombola", Tombola.class).getMappedResults();
+		return jugadas;
+	}
+
+	public List<Tombola> obtenerTodasLasJugadas(DateTime fechaTirada) {
+		Aggregation tombolaAggregation = Aggregation.newAggregation(
+				match(Criteria.where("eliminado").is(false).andOperator(Criteria.where("fechaTirada").gt(fechaTirada))),
+				Aggregation.sort(Sort.Direction.ASC, "fechaTirada")
+		);
 		List<Tombola> jugadas = mongoOperations.aggregate(tombolaAggregation, "Tombola", Tombola.class).getMappedResults();
 		return jugadas;
 	}
@@ -103,6 +114,16 @@ public class TombolaDAO {
 
 	public Optional<Tombola> findById(String tombolaId) {
 		return tombolaRepository.findById(tombolaId);
+	}
+
+	public DateTime obtenerUltimaFechaDeTirada() {
+		Aggregation tombolaAggregation = Aggregation.newAggregation(
+				match(Criteria.where("eliminado").is(false)),
+				Aggregation.sort(Sort.Direction.DESC, "fechaTirada"),
+				Aggregation.limit(1)
+		);
+		List<Tombola> combinacionesDeTres = mongoOperations.aggregate(tombolaAggregation, "Tombola", Tombola.class).getMappedResults();
+		return combinacionesDeTres.get(0).getFechaTirada();
 	}
 
 }

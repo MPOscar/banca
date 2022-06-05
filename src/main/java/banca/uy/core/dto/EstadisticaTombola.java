@@ -24,6 +24,8 @@ public class EstadisticaTombola {
 
     private List<Integer> sorteo = new ArrayList<>();
 
+    private int totalDeNumerosPosibles;
+
     private List<Integer> numerosPosibles = new ArrayList<>();
 
     private HashMap<Integer, Integer> jugadasRepetidas;
@@ -79,5 +81,13 @@ public class EstadisticaTombola {
 
     public void setJugadasRepetidas(HashMap<Integer, Integer> jugadasRepetidas) {
         this.jugadasRepetidas = jugadasRepetidas;
+    }
+
+    public int getTotalDeNumerosPosibles() {
+        return totalDeNumerosPosibles;
+    }
+
+    public void setTotalDeNumerosPosibles(int totalDeNumerosPosibles) {
+        this.totalDeNumerosPosibles = totalDeNumerosPosibles;
     }
 }

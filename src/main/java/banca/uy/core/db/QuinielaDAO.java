@@ -1,6 +1,7 @@
 package banca.uy.core.db;
 
 import banca.uy.core.entity.Quiniela;
+import banca.uy.core.entity.Tombola;
 import banca.uy.core.repository.IQuinielaRepository;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,15 @@ public class QuinielaDAO {
 		Query query = new Query();
 		List<Quiniela> quinielaList = mongoOperations.find(query.with(Sort.by(Sort.Direction.DESC, "fechaTirada")).addCriteria(Criteria.where("fechaTirada").lte(fecha)).limit(30), Quiniela.class);
 		return quinielaList;
+	}
+
+	public Quiniela save(Quiniela quiniela){
+		quiniela = quinielaRepository.save(quiniela);
+		if(quiniela.getSId() == null){
+			quiniela.setSId(quiniela.getId());
+			quiniela = quinielaRepository.save(quiniela);
+		}
+		return quiniela;
 	}
 
 }

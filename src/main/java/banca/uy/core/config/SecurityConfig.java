@@ -51,6 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/tombola/**").permitAll()
                 .antMatchers("/cincoDeOro/**").permitAll()
                 .antMatchers("/quiniela/**").permitAll()
+                .antMatchers("/actualizarBaseDeDatos/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .apply(new JwtConfigurer(jwtTokenProvider));

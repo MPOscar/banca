@@ -30,15 +30,8 @@ public interface ITombolaService {
 
 	List<EstadisticaTombola> estadisticasJugadasMayorNumeroCoincidencias() throws InterruptedException;
 
-    List<EstadisticaTombola> estadisticasJugadasMayorNumeroCoincidenciasRepetidas() throws InterruptedException;
+	List<EstadisticaTombola> estadisticasUltimaJugada(int page, int limit) throws InterruptedException;
 
-	List<List<Integer>> obtenerTodasLasCombinacionesDeTresTombola();
+	List<EstadisticaTombola> estadisticasJugadasMayorNumeroCoincidenciasRepetidas() throws InterruptedException;
 
-	List<List<Integer>> obtenerTodasLasCombinacionesDeCuatroTombola();
-
-	List<List<Integer>> obtenerTodasLasCombinacionesDeCincoTombola();
-
-	List<List<Integer>> obtenerTodasLasCombinacionesDeSeisTombola();
-
-	List<List<Integer>> obtenerTodasLasCombinacionesDeSieteTombola();
 }

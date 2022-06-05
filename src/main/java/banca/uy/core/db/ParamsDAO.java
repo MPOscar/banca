@@ -49,16 +49,18 @@ public class ParamsDAO {
 
 	/**
 	 * Salva una {@link Param} pasada por parámetro
-	 * @param toAdd {@link Param}
+	 * @param param {@link Param}
 	 * @return {@link Param}
 	 */
-	public Param save(Param toAdd) {
+	public Param save(Param param) {
 		logger.log(Level.INFO, "El método save() de la clase PropiedadesConfigDAO fue ejecutado.");
-		toAdd.setFechaCreacion();
-		toAdd.setFechaEdicion();
-		toAdd = paramRepository.save(toAdd);
-		toAdd.setSId(toAdd.getId());
-		return paramRepository.save(toAdd);
+		param.setFechaEdicion();
+		param = paramRepository.save(param);
+		if (param.getSId() == null) {
+			param.setSId(param.getId());
+			param = paramRepository.save(param);
+		}
+		return param;
 	}
 
 	/**

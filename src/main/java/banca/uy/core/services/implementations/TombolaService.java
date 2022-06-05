@@ -1,8 +1,7 @@
 package banca.uy.core.services.implementations;
 
+import banca.uy.core.db.TombolaCombinacionesDeTresDAO;
 import banca.uy.core.dto.EstadisticaTombola;
-import banca.uy.core.entity.CincoDeOro;
-import banca.uy.core.entity.CincoDeOroCombinacion;
 import banca.uy.core.repository.ITombolaRepository;
 import banca.uy.core.services.interfaces.IEnviarPeticionApiDeLaBancaService;
 import banca.uy.core.db.TombolaDAO;
@@ -28,6 +27,9 @@ public class TombolaService implements ITombolaService {
 
 	@Autowired
 	private TombolaDAO tombolaDAO;
+
+	@Autowired
+	TombolaCombinacionesDeTresDAO tombolaCombinacionesDeTresDAO;
 
 	@Autowired
     IEnviarPeticionApiDeLaBancaService enviarPeticionApiDeLaBancaService;
@@ -214,6 +216,119 @@ public class TombolaService implements ITombolaService {
 	}
 
 	@Override
+	public List<EstadisticaTombola> estadisticasUltimaJugada(int page, int limit) throws InterruptedException {
+		List<Tombola> jugadas = tombolaDAO.obtenerUltimasJugadas(page, limit);
+		List<EstadisticaTombola> estadisticas = new ArrayList<>();
+		for (Tombola tombola : jugadas) {
+			Optional<Tombola> optionalTombola = tombolaDAO.findById(tombola.getId());
+			if (optionalTombola.isPresent()) {
+				List<Tombola> jugadasAnteriores = tombolaDAO.obtenerJugadasAnteriones(optionalTombola.get(), 10);
+				List<Integer> numeros = obtenerNumeros(
+						jugadasAnteriores.get(0).getSorteo(),
+						1
+				);
+				List<Integer> numerosMenos = obtenerNumeros(
+						jugadasAnteriores.get(1).getSorteo(),
+						1
+				);
+				List<Integer> numerosPosiblesTombola = obtenerNumeroPosibles();
+				List<Integer> jugadasRepetidas1 = obtenerJugadasRepetidas(jugadasAnteriores.get(0).getSorteo(), jugadasAnteriores.get(1).getSorteo());
+				List<Integer> jugadasRepetidas2 = obtenerJugadasRepetidas(jugadasAnteriores.get(0).getSorteo(), jugadasAnteriores.get(2).getSorteo());
+				List<Integer> jugadasRepetidas3 = obtenerJugadasRepetidas(jugadasAnteriores.get(0).getSorteo(), jugadasAnteriores.get(3).getSorteo());
+				List<Integer> jugadasRepetidas4 = obtenerJugadasRepetidas(jugadasAnteriores.get(0).getSorteo(), jugadasAnteriores.get(4).getSorteo());
+				List<Integer> jugadasRepetidas5 = obtenerJugadasRepetidas(jugadasAnteriores.get(0).getSorteo(), jugadasAnteriores.get(5).getSorteo());
+				List<Integer> jugadasRepetidas6 = obtenerJugadasRepetidas(jugadasAnteriores.get(0).getSorteo(), jugadasAnteriores.get(6).getSorteo());
+				List<Integer> jugadasRepetidas7 = obtenerJugadasRepetidas(jugadasAnteriores.get(0).getSorteo(), jugadasAnteriores.get(7).getSorteo());
+				List<Integer> jugadasRepetidas8 = obtenerJugadasRepetidas(jugadasAnteriores.get(0).getSorteo(), jugadasAnteriores.get(8).getSorteo());
+				List<Integer> jugadasRepetidas9 = obtenerJugadasRepetidas(jugadasAnteriores.get(0).getSorteo(), jugadasAnteriores.get(9).getSorteo());
+
+				List<Integer> jugadasRepetidas10 = obtenerJugadasNoRepetidas(jugadasAnteriores.get(1).getSorteo(), jugadasAnteriores.get(2).getSorteo());
+				List<Integer> jugadasRepetidas11 = obtenerJugadasNoRepetidas(jugadasAnteriores.get(1).getSorteo(), jugadasAnteriores.get(3).getSorteo());
+				List<Integer> jugadasRepetidas12 = obtenerJugadasNoRepetidas(jugadasAnteriores.get(1).getSorteo(), jugadasAnteriores.get(4).getSorteo());
+				List<Integer> jugadasRepetidas13 = obtenerJugadasNoRepetidas(jugadasAnteriores.get(1).getSorteo(), jugadasAnteriores.get(5).getSorteo());
+				List<Integer> jugadasRepetidas14 = obtenerJugadasNoRepetidas(jugadasAnteriores.get(1).getSorteo(), jugadasAnteriores.get(6).getSorteo());
+				List<Integer> jugadasRepetidas15 = obtenerJugadasNoRepetidas(jugadasAnteriores.get(1).getSorteo(), jugadasAnteriores.get(7).getSorteo());
+				List<Integer> jugadasRepetidas16 = obtenerJugadasNoRepetidas(jugadasAnteriores.get(1).getSorteo(), jugadasAnteriores.get(8).getSorteo());
+				List<Integer> jugadasRepetidas17 = obtenerJugadasNoRepetidas(jugadasAnteriores.get(1).getSorteo(), jugadasAnteriores.get(8).getSorteo());
+
+				eliminarNumerosRepetidos(numerosPosiblesTombola, jugadasRepetidas1);
+				eliminarNumerosRepetidos(numerosPosiblesTombola, jugadasRepetidas2);
+				eliminarNumerosRepetidos(numerosPosiblesTombola, jugadasRepetidas3);
+				eliminarNumerosRepetidos(numerosPosiblesTombola, jugadasRepetidas4);
+				eliminarNumerosRepetidos(numerosPosiblesTombola, jugadasRepetidas5);
+				eliminarNumerosRepetidos(numerosPosiblesTombola, jugadasRepetidas6);
+				eliminarNumerosRepetidos(numerosPosiblesTombola, jugadasRepetidas7);
+				eliminarNumerosRepetidos(numerosPosiblesTombola, jugadasRepetidas8);
+				eliminarNumerosRepetidos(numerosPosiblesTombola, jugadasRepetidas9);
+
+				//eliminarNumerosRepetidos(numerosPosiblesTombola, jugadasAnteriores.get(0).getSorteo());
+				//eliminarNumerosRepetidos(numerosPosiblesTombola, jugadasAnteriores.get(1).getSorteo());
+				//eliminarNumerosRepetidos(numerosPosiblesTombola, jugadasAnteriores.get(2).getSorteo());
+				//eliminarNumerosRepetidos(numerosPosiblesTombola, jugadasAnteriores.get(3).getSorteo());
+				//eliminarNumerosRepetidos(numerosPosiblesTombola, jugadasAnteriores.get(4).getSorteo());
+				//eliminarNumerosRepetidos(numerosPosiblesTombola, jugadasAnteriores.get(5).getSorteo());
+				//eliminarNumerosRepetidos(numerosPosiblesTombola, jugadasAnteriores.get(6).getSorteo());
+				//eliminarNumerosRepetidos(numerosPosiblesTombola, jugadasAnteriores.get(7).getSorteo());
+				//eliminarNumerosRepetidos(numerosPosiblesTombola, jugadasAnteriores.get(0).getSorteo());
+				//eliminarNumerosRepetidos(numerosPosiblesTombola, numeros);
+				//(numerosPosiblesTombola, jugadasAnteriores.get(3).getSorteo());
+				//eliminarNumerosRepetidos(numerosPosiblesTombola, numerosMenos);
+				//numerosPosiblesTombola = eliminarNumerosConsecutivos(numerosPosiblesTombola);
+				//(numerosPosiblesTombola, numerosMenos);
+				int numeroDeCoincidencias = buscarNumeroDeCoincidencias(tombola.getSorteo(), jugadasAnteriores.get(2).getSorteo());
+				EstadisticaTombola estadisticaTombola = new EstadisticaTombola(
+						optionalTombola.get(),
+						numeroDeCoincidencias,
+						new ArrayList<>()
+				);
+				estadisticas.add(estadisticaTombola);
+				estadisticaTombola.setTotalDeNumerosPosibles(numerosPosiblesTombola.size());
+				/*if (jugadasAnteriores.size() > 4) {
+					List<Integer> numerosPosibles = eliminarNumerosRepetidos(jugadasAnteriores);
+					int numeroDeCoincidencias = buscarNumeroDeCoincidencias(tombola.getSorteo(), numerosPosibles);
+					EstadisticaTombola estadisticaTombola = new EstadisticaTombola(optionalTombola.get(), numeroDeCoincidencias, numerosPosibles);
+					estadisticas.add(estadisticaTombola);
+				}*/
+			}
+		}
+		return estadisticas;
+	}
+
+	public List<Integer> obtenerJugadasRepetidas(List<Integer> sorteo, List<Integer> jugadas) {
+		List<Integer> jugadasRepetidas = new ArrayList<>();
+		for (Integer numero: jugadas) {
+			if (sorteo.indexOf(numero) > -1) {
+				jugadasRepetidas.add(numero);
+			}
+		}
+		return jugadasRepetidas;
+	}
+
+	public List<Integer> obtenerJugadasNoRepetidas(List<Integer> sorteo, List<Integer> jugadas) {
+		List<Integer> jugadasRepetidas = new ArrayList<>();
+		for (Integer numero: jugadas) {
+			if (sorteo.indexOf(numero) == -1) {
+				jugadasRepetidas.add(numero);
+			}
+		}
+		return jugadasRepetidas;
+	}
+
+	public List<Integer> obtenerNumeros(List<Integer> sorteo, int numeroASumar) {
+		List<Integer> numeros = new ArrayList<>();
+		for (Integer numero: sorteo) {
+			double numeroNuevo = numero + 3.14159;
+			if (numeroNuevo > 100) {
+				numeroNuevo = numeroNuevo - 100;
+			} else if (numeroNuevo < 0) {
+				numeroNuevo = 100 - numeroNuevo;
+			}
+			numeros.add((int) numeroNuevo);
+		}
+		return numeros;
+	}
+
+	@Override
 	public List<EstadisticaTombola> estadisticasJugadasMayorNumeroCoincidenciasRepetidas() throws InterruptedException {
 		List<Tombola> jugadas = tombolaDAO.obtenerTodasLasJugadas();
 		List<EstadisticaTombola> estadisticas = new ArrayList<>();
@@ -239,6 +354,25 @@ public class TombolaService implements ITombolaService {
 			}
 		}
 		return numerosPosiblesTombola;
+	}
+
+	public List<Integer> eliminarNumerosRepetidos(List<Integer> numerosPosiblesTombola, List<Integer> jugadasAnteriores) {
+		for (Integer numero: jugadasAnteriores) {
+			numerosPosiblesTombola.remove(numero);
+		}
+		return numerosPosiblesTombola;
+	}
+
+	public List<Integer> eliminarNumerosConsecutivos(List<Integer> numerosPosiblesTombola) {
+		List<Integer> numeros = new ArrayList<>();
+		for (int i = 0; i < numerosPosiblesTombola.size() -1; i++) {
+			if(numerosPosiblesTombola.get(i) + 1 != numerosPosiblesTombola.get(i + 1)) {
+				numeros.add(numerosPosiblesTombola.get(i));
+			} else {
+				i += 2;
+			}
+		}
+		return numeros;
 	}
 
 	public HashMap<Integer, Integer> buscarNumerosRepetidos(List<Tombola> jugadasAnteriores) {
@@ -278,123 +412,4 @@ public class TombolaService implements ITombolaService {
 		return numeros[1] + "/" + Meses.mesesDelAño.get(numeros[3].toLowerCase()) + "/" + numeros[5];
 	}
 
-	@Override
-	public List<List<Integer>> obtenerTodasLasCombinacionesDeTresTombola() {
-		List<List<Integer>> permutaciones = new ArrayList<>();
-		int numero = 99;
-		for (int a = 0; a <= numero; a++) {
-			for (int b = a + 1; b <= numero; b++) {
-				for (int c = b + 1; c <= numero; c++) {
-					List<Integer> permutacion = new ArrayList<>();
-					permutacion.add(a);
-					permutacion.add(b);
-					permutacion.add(c);
-					permutaciones.add(permutacion);
-				}
-			}
-		}
-		return permutaciones;
-	}
-
-	@Override
-	public List<List<Integer>> obtenerTodasLasCombinacionesDeCuatroTombola() {
-		List<List<Integer>> permutaciones = new ArrayList<>();
-		int numero = 99;
-		for (int a = 0; a <= numero; a++) {
-			for (int b = a + 1; b <= numero; b++) {
-				for (int c = b + 1; c <= numero; c++) {
-					for (int d = c + 1; d <= numero; d++) {
-						List<Integer> permutacion = new ArrayList<>();
-						permutacion.add(a);
-						permutacion.add(b);
-						permutacion.add(c);
-						permutacion.add(d);
-						permutaciones.add(permutacion);
-					}
-				}
-			}
-		}
-		return permutaciones;
-	}
-
-	@Override
-	public List<List<Integer>> obtenerTodasLasCombinacionesDeCincoTombola() {
-		List<List<Integer>> permutaciones = new ArrayList<>();
-		int numero = 99;
-		for (int a = 0; a <= numero; a++) {
-			for (int b = a + 1; b <= numero; b++) {
-				for (int c = b + 1; c <= numero; c++) {
-					for (int d = c + 1; d <= numero; d++) {
-						for (int e = d + 1; e <= numero; e++) {
-							List<Integer> permutacion = new ArrayList<>();
-							permutacion.add(a);
-							permutacion.add(b);
-							permutacion.add(c);
-							permutacion.add(d);
-							permutacion.add(e);
-							permutaciones.add(permutacion);
-						}
-					}
-				}
-			}
-		}
-		return permutaciones;
-	}
-
-	@Override
-	public List<List<Integer>> obtenerTodasLasCombinacionesDeSeisTombola() {
-		List<List<Integer>> permutaciones = new ArrayList<>();
-		int numero = 99;
-		for (int a = 0; a <= numero; a++) {
-			for (int b = a + 1; b <= numero; b++) {
-				for (int c = b + 1; c <= numero; c++) {
-					for (int d = c + 1; d <= numero; d++) {
-						for (int e = d + 1; e <= numero; e++) {
-							for (int f = e + 1; f <= numero; f++) {
-								List<Integer> permutacion = new ArrayList<>();
-								permutacion.add(a);
-								permutacion.add(b);
-								permutacion.add(c);
-								permutacion.add(d);
-								permutacion.add(e);
-								permutacion.add(f);
-								permutaciones.add(permutacion);
-							}
-						}
-					}
-				}
-			}
-		}
-		return permutaciones;
-	}
-
-	@Override
-	public List<List<Integer>> obtenerTodasLasCombinacionesDeSieteTombola() {
-		List<List<Integer>> permutaciones = new ArrayList<>();
-		int numero = 99;
-		for (int a = 0; a <= numero; a++) {
-			for (int b = a + 1; b <= numero; b++) {
-				for (int c = b + 1; c <= numero; c++) {
-					for (int d = c + 1; d <= numero; d++) {
-						for (int e = d + 1; e <= numero; e++) {
-							for (int f = e + 1; f <= numero; f++) {
-								for (int g = f + 1; g <= numero; g++) {
-									List<Integer> permutacion = new ArrayList<>();
-									permutacion.add(a);
-									permutacion.add(b);
-									permutacion.add(c);
-									permutacion.add(d);
-									permutacion.add(e);
-									permutacion.add(f);
-									permutacion.add(g);
-									permutaciones.add(permutacion);
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		return permutaciones;
-	}
 }

@@ -31,40 +31,4 @@ public class QuinielaController {
     this.authenticationFacade = authenticationFacade;
   }
 
-  @PostMapping("/tirada")
-  public ResponseEntity saveTirada(@RequestBody String tirada) {
-    try {
-      Quiniela quiniela = quinielaService.saveTirada(tirada);
-      return ok(quiniela);
-    } catch (Exception ex) {
-      logger.log(Level.ERROR, "precios controller @PostMapping(\"/excel/actualizar\") Error:", ex.getMessage(), ex.getStackTrace());
-      throw new WebApplicationException("Ocurrió un error al actualizar los productos - " + ex.getMessage(),
-              HttpStatus.INTERNAL_SERVER_ERROR.value());
-    }
-  }
-
-  @GetMapping("/jugada")
-  public ResponseEntity getJugada() {
-    try {
-      Set<Integer> jugada = quinielaService.getJugada();
-      return ok(jugada);
-    } catch (Exception ex) {
-      logger.log(Level.ERROR, "precios controller @PostMapping(\"/excel/actualizar\") Error:", ex.getMessage(), ex.getStackTrace());
-      throw new WebApplicationException("Ocurrió un error al actualizar los productos - " + ex.getMessage(),
-              HttpStatus.INTERNAL_SERVER_ERROR.value());
-    }
-  }
-
-  @GetMapping("/numerosSinSalir")
-  public ResponseEntity getNumerosSinSalir(@RequestParam(defaultValue = "") String fecha) {
-    try {
-      Set<Integer> jugada = quinielaService.getNumerosSinSalir(fecha);
-      return ok(jugada);
-    } catch (Exception ex) {
-      logger.log(Level.ERROR, "precios controller @PostMapping(\"/excel/actualizar\") Error:", ex.getMessage(), ex.getStackTrace());
-      throw new WebApplicationException("Ocurrió un error al actualizar los productos - " + ex.getMessage(),
-              HttpStatus.INTERNAL_SERVER_ERROR.value());
-    }
-  }
-
 }

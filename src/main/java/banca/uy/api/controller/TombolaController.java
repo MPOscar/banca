@@ -4,6 +4,8 @@ import banca.uy.core.dto.EstadisticaTombola;
 import banca.uy.core.entity.Tombola;
 import banca.uy.core.resources.dto.Representacion;
 import banca.uy.core.security.IAuthenticationFacade;
+import banca.uy.core.services.interfaces.ITombolaCombinacionesDeSieteService;
+import banca.uy.core.services.interfaces.ITombolaCombinacionesDeTresService;
 import banca.uy.core.services.interfaces.ITombolaService;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -28,6 +30,12 @@ public class TombolaController {
 
   @Autowired
   ITombolaService tombolaService;
+
+  @Autowired
+  ITombolaCombinacionesDeTresService tombolaCombinacionesDeTresService;
+
+  @Autowired
+  ITombolaCombinacionesDeSieteService tombolaCombinacionesDeSieteService;
 
   private final IAuthenticationFacade authenticationFacade;
 
@@ -149,6 +157,69 @@ public class TombolaController {
     try {
       List<EstadisticaTombola> estadisticas = tombolaService.estadisticasJugadasMayorNumeroCoincidenciasRepetidas();
       return new Representacion<>(HttpStatus.OK.value(), estadisticas);
+    } catch (Exception ex) {
+      logger.log(Level.ERROR, "precios controller @PostMapping(\"/excel/actualizar\") Error:", ex.getMessage(), ex.getStackTrace());
+      throw new WebApplicationException("Ocurrió un error al actualizar los productos - " + ex.getMessage(),
+              HttpStatus.INTERNAL_SERVER_ERROR.value());
+    }
+  }
+
+  @GetMapping("/estadisticasUltimaJugada")
+  public Representacion estadisticasUltimaJugada(
+          @RequestParam(defaultValue = "1") int page,
+          @RequestParam(defaultValue = "5") int limit
+  ) {
+    try {
+      List<EstadisticaTombola> estadisticas = tombolaService.estadisticasUltimaJugada(page, limit);
+      return new Representacion<>(HttpStatus.OK.value(), estadisticas);
+    } catch (Exception ex) {
+      logger.log(Level.ERROR, "precios controller @PostMapping(\"/excel/actualizar\") Error:", ex.getMessage(), ex.getStackTrace());
+      throw new WebApplicationException("Ocurrió un error al actualizar los productos - " + ex.getMessage(),
+              HttpStatus.INTERNAL_SERVER_ERROR.value());
+    }
+  }
+
+  @GetMapping("/obtenerTodasLasJugadasDeTresTombola")
+  public Representacion obtenerTodasLasJugadasDeTresTombola() {
+    try {
+      HashMap<String, Integer> jugadasDeTres = tombolaCombinacionesDeTresService.obtenerTodasLasJugadasDeTresTombola();
+      return new Representacion<>(HttpStatus.OK.value(), jugadasDeTres);
+    } catch (Exception ex) {
+      logger.log(Level.ERROR, "precios controller @PostMapping(\"/excel/actualizar\") Error:", ex.getMessage(), ex.getStackTrace());
+      throw new WebApplicationException("Ocurrió un error al actualizar los productos - " + ex.getMessage(),
+              HttpStatus.INTERNAL_SERVER_ERROR.value());
+    }
+  }
+
+  @GetMapping("/inicializarTodasLasJugadasDeTresTombola")
+  public Representacion inicializarTodasLasJugadasDeTresTombola() {
+    try {
+      tombolaCombinacionesDeTresService.inicializarTodasLasJugadasDeTresTombola();
+      return new Representacion<>(HttpStatus.OK.value(), "inicializarTodasLasJugadasDeTresTombola");
+    } catch (Exception ex) {
+      logger.log(Level.ERROR, "precios controller @PostMapping(\"/excel/actualizar\") Error:", ex.getMessage(), ex.getStackTrace());
+      throw new WebApplicationException("Ocurrió un error al actualizar los productos - " + ex.getMessage(),
+              HttpStatus.INTERNAL_SERVER_ERROR.value());
+    }
+  }
+
+  @GetMapping("/actualizarTodasLasJugadasDeTresTombola")
+  public Representacion actualizarTodasLasJugadasDeTresTombola() {
+    try {
+      tombolaCombinacionesDeTresService.actualizarTodasLasJugadasDeTresTombola();
+      return new Representacion<>(HttpStatus.OK.value(), "actualizarTodasLasJugadasDeTresTombola");
+    } catch (Exception ex) {
+      logger.log(Level.ERROR, "precios controller @PostMapping(\"/excel/actualizar\") Error:", ex.getMessage(), ex.getStackTrace());
+      throw new WebApplicationException("Ocurrió un error al actualizar los productos - " + ex.getMessage(),
+              HttpStatus.INTERNAL_SERVER_ERROR.value());
+    }
+  }
+
+  @GetMapping("/inicializarTodasLasJugadasDeSieteTombola")
+  public Representacion inicializarTodasLasJugadasDeSieteTombola() {
+    try {
+      tombolaCombinacionesDeSieteService.inicializarTodasLasJugadasDeSieteTombola();
+      return new Representacion<>(HttpStatus.OK.value(), "inicializarTodasLasJugadasDeSieteTombola");
     } catch (Exception ex) {
       logger.log(Level.ERROR, "precios controller @PostMapping(\"/excel/actualizar\") Error:", ex.getMessage(), ex.getStackTrace());
       throw new WebApplicationException("Ocurrió un error al actualizar los productos - " + ex.getMessage(),
